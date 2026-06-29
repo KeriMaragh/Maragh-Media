@@ -128,8 +128,8 @@
   .ms-date-label { font-size: 10px; color: var(--ink-mid); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
   .date-input { font-size: 11px; color: var(--ink-mid); border: 1px solid var(--sand-dark); background: var(--cream); cursor: pointer; font-family: inherit; padding: 2px 4px; border-radius: 5px; width: 88px; }
   .date-input:focus { outline: 1px solid var(--rust-mid); }
-  .date-input::-webkit-calendar-picker-indicator { display: none; }
-  .date-input::-webkit-inner-spin-button { display: none; }
+  .date-input::-webkit-calendar-picker-indicator { opacity: 0; width: 100%; position: absolute; left: 0; cursor: pointer; }
+  .date-input-wrap { position: relative; display: inline-block; width: 88px; }
   .milestone-del { background: none; border: none; cursor: pointer; color: transparent; padding: 2px; border-radius: 4px; font-size: 12px; transition: all 0.15s; flex-shrink: 0; margin-top: 1px; }
   .milestone-row:hover .milestone-del { color: var(--ink-mid); }
   .milestone-del:hover { background: var(--sand-dark); color: var(--rust) !important; }
@@ -443,11 +443,15 @@ function renderProjectCard(proj, isArchived) {
         <div class="ms-dates">
           <div class="ms-date-group">
             <span class="ms-date-label">Start</span>
-            <input type="date" class="date-input" value="${m.startDate||''}" ${isArchived?'readonly':''} title="Start date" onchange="setMilestoneField(${proj.id},${i},'startDate',this.value)" />
+            <div class="date-input-wrap">
+              <input type="date" class="date-input" value="${m.startDate||''}" ${isArchived?'readonly':''} title="Start date" onchange="setMilestoneField(${proj.id},${i},'startDate',this.value)" />
+            </div>
           </div>
           <div class="ms-date-group">
             <span class="ms-date-label">End</span>
-            <input type="date" class="date-input" value="${m.endDate||''}" ${isArchived?'readonly':''} title="End date" onchange="setMilestoneField(${proj.id},${i},'endDate',this.value)" />
+            <div class="date-input-wrap">
+              <input type="date" class="date-input" value="${m.endDate||''}" ${isArchived?'readonly':''} title="End date" onchange="setMilestoneField(${proj.id},${i},'endDate',this.value)" />
+            </div>
           </div>
         </div>
       </div>
