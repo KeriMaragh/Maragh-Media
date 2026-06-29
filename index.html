@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Writer's Room</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&display=swap" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --sand: #F5F0E8; --sand-dark: #E8E0D0;
+    --rust: #B85C38; --rust-light: #F2E4DC; --rust-mid: #D4784E;
+    --sage: #5C7A5E; --sage-light: #E4EDE4;
+    --ink: #2C2416; --ink-mid: #5C5040;
+    --gold: #C4963A; --gold-light: #FAF0DC;
+    --cream: #FDFAF4; --page-bg: #F7F2EA;
+    --blue: #3B7DD8; --blue-light: #E6EFFC;
+    --green: #2E7D52; --green-light: #E0F2EB;
+    --teal-bg: #4C6B77;
+    --teal-banner: #4C6B77;
+    --teal-card: rgba(255,255,255,0.13);
+    --teal-border: rgba(255,255,255,0.2);
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--page-bg); color: var(--ink); min-height: 100vh; }
+
+  /* Teal banner always visible at top */
+  .banner { background: var(--teal-banner); padding: 1.5rem 1rem 0; }
+  .banner-inner { max-width: 1100px; margin: 0 auto; }
+
+  /* Teal full-page background only on overview */
+  body.overview-active { background: var(--teal-bg); }
+  body.overview-active .banner { background: transparent; }
+
+  .page-body { padding: 1.75rem 1rem 4rem; }
+  .app { max-width: 1100px; margin: 0 auto; }
+  .top-bar { display: flex; align-items: center; justify-content: space-between; padding-bottom: 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.2); margin-bottom: 0; }
+  .app-title { font-size: 26px; font-weight: 400; color: #fff; letter-spacing: -0.3px; font-family: 'Playfair Display', Georgia, serif; font-style: italic; }
+  .app-subtitle { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 3px; }
+
+  .nav { display: flex; gap: 4px; }
+  .nav-btn { padding: 7px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; border: 1px solid transparent; background: transparent; color: rgba(255,255,255,0.75); transition: all 0.15s; font-family: inherit; }
+  .nav-btn:hover:not(.active) { background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.2); }
+  .nav-btn.active { background: #fff; color: var(--teal-banner); border-color: #fff; font-weight: 500; }
+
+  .section { display: none; }
+  .section.visible { display: block; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--ink-mid); font-weight: 600; }
+  body.overview-active .section-label { color: rgba(255,255,255,0.6); }
+  .add-btn { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border: 1px dashed var(--rust-mid); border-radius: 8px; background: transparent; color: var(--rust); font-size: 13px; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+  .add-btn:hover { background: var(--rust-light); }
+
+  /* Overview teal cards */
+  .overview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 1.75rem; }
+  .stat-card { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 12px; padding: 1.1rem; text-align: center; transition: all 0.2s; }
+  body.overview-active .stat-card { background: var(--teal-card); border-color: var(--teal-border); }
+  .stat-num { font-size: 28px; font-weight: 600; color: var(--rust); }
+  body.overview-active .stat-num { color: #fff; }
+  .stat-num-sm { font-size: 20px; font-weight: 600; color: var(--gold); }
+  body.overview-active .stat-num-sm { color: #FFD97D; }
+  .stat-label { font-size: 12px; color: var(--ink-mid); margin-top: 3px; }
+  body.overview-active .stat-label { color: rgba(255,255,255,0.65); }
+  .due-soon-list { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 14px; padding: 1rem 1.25rem; transition: all 0.2s; }
+  body.overview-active .due-soon-list { background: var(--teal-card); border-color: var(--teal-border); }
+  .due-soon-item { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--sand); }
+  body.overview-active .due-soon-item { border-bottom-color: rgba(255,255,255,0.12); }
+  .due-soon-item:last-child { border-bottom: none; }
+  .due-item-name { font-size: 13px; color: var(--ink); font-weight: 500; }
+  body.overview-active .due-item-name { color: #fff; }
+  .due-item-project { font-size: 12px; color: var(--ink-mid); margin-top: 2px; }
+  body.overview-active .due-item-project { color: rgba(255,255,255,0.6); }
+  .deadline-badge { display: inline-block; padding: 3px 9px; border-radius: 10px; font-size: 11px; font-weight: 500; }
+  .deadline-urgent { background: #FDE8E4; color: #9B3A1A; }
+  .deadline-soon { background: var(--gold-light); color: #7A5C1A; }
+  .deadline-ok { background: var(--green-light); color: var(--green); }
+  .empty-hint { font-size: 13px; color: var(--ink-mid); text-align: center; padding: 2rem; font-style: italic; }
+  body.overview-active .empty-hint { color: rgba(255,255,255,0.5); }
+
+  /* Projects grid */
+  .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; align-items: start; }
+  .project-card { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 14px; padding: 1.25rem; border-top: 5px solid var(--rust); }
+  .project-card.sage { border-top-color: var(--sage); }
+  .project-card.gold { border-top-color: var(--gold); }
+  .project-card.archived { opacity: 0.65; border-top-color: var(--ink-mid); }
+  .project-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.9rem; }
+  .project-actions { display: flex; gap: 4px; flex-shrink: 0; }
+  .icon-btn { background: none; border: none; cursor: pointer; color: var(--ink-mid); padding: 4px; border-radius: 6px; transition: all 0.15s; font-size: 15px; }
+  .icon-btn:hover { background: var(--sand-dark); color: var(--ink); }
+  .archive-badge { display: inline-block; font-size: 10px; padding: 2px 8px; background: var(--sand-dark); color: var(--ink-mid); border-radius: 10px; margin-top: 3px; }
+
+  /* Progress bar */
+  .progress-bar-wrap { margin-bottom: 0.9rem; }
+  .progress-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-mid); margin-bottom: 5px; }
+  .progress-bar { height: 6px; background: var(--sand-dark); border-radius: 3px; }
+  .progress-fill { height: 100%; border-radius: 3px; background: var(--rust); transition: width 0.3s; }
+  .sage .progress-fill { background: var(--sage); }
+  .gold .progress-fill { background: var(--gold); }
+  .archived .progress-fill { background: var(--ink-mid); }
+
+  /* Milestones */
+  .milestones-wrap { margin-bottom: 0.75rem; }
+  .milestones { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
+  .milestone-row { display: flex; align-items: flex-start; gap: 7px; padding: 7px 8px; border-radius: 7px; background: var(--sand); transition: background 0.15s; cursor: default; }
+  .milestone-row.dragging { opacity: 0.4; }
+  .milestone-row.drag-over { background: var(--blue-light); outline: 1.5px dashed var(--blue); }
+  .milestone-row:hover { background: var(--sand-dark); }
+  .drag-handle { cursor: grab; color: var(--ink-mid); font-size: 13px; flex-shrink: 0; opacity: 0.5; margin-top: 2px; }
+  .drag-handle:active { cursor: grabbing; }
+  .milestone-check { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--sand-dark); background: transparent; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.18s; margin-top: 1px; }
+  .milestone-check.inprogress { background: var(--blue); border-color: var(--blue); }
+  .milestone-check.done { background: var(--green); border-color: var(--green); }
+  .milestone-check svg { display: none; }
+  .milestone-check.done svg { display: block; }
+
+  /* Milestone content: name + dates stacked */
+  .milestone-content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+  .milestone-top { display: flex; align-items: center; gap: 6px; }
+  .milestone-name { font-size: 12px; color: var(--ink); flex: 1; min-width: 0; }
+  .milestone-name.done { text-decoration: line-through; color: var(--ink-mid); }
+  .milestone-name.inprogress { color: var(--blue); font-style: italic; }
+  .milestone-state-label { font-size: 10px; padding: 1px 6px; border-radius: 8px; flex-shrink: 0; }
+  .state-inprogress { background: var(--blue-light); color: var(--blue); }
+
+  /* Dates row below name */
+  .ms-dates { display: flex; align-items: center; gap: 10px; }
+  .ms-date-group { display: flex; align-items: center; gap: 4px; }
+  .ms-date-label { font-size: 10px; color: var(--ink-mid); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+  .date-input { font-size: 11px; color: var(--ink-mid); border: 1px solid var(--sand-dark); background: var(--cream); cursor: pointer; font-family: inherit; padding: 2px 4px; border-radius: 5px; width: 88px; }
+  .date-input:focus { outline: 1px solid var(--rust-mid); }
+  .date-input::-webkit-calendar-picker-indicator { display: none; }
+  .date-input::-webkit-inner-spin-button { display: none; }
+  .milestone-del { background: none; border: none; cursor: pointer; color: transparent; padding: 2px; border-radius: 4px; font-size: 12px; transition: all 0.15s; flex-shrink: 0; margin-top: 1px; }
+  .milestone-row:hover .milestone-del { color: var(--ink-mid); }
+  .milestone-del:hover { background: var(--sand-dark); color: var(--rust) !important; }
+
+  /* Add milestone */
+  .add-milestone-row { display: flex; align-items: center; gap: 6px; }
+  .milestone-name-input { flex: 1; padding: 5px 8px; border: 1px dashed var(--sand-dark); border-radius: 6px; font-size: 12px; font-family: inherit; color: var(--ink); background: var(--cream); }
+  .milestone-name-input:focus { outline: 1px solid var(--rust-mid); border-style: solid; }
+  .milestone-add-btn { padding: 4px 10px; font-size: 11px; border: 1px solid var(--rust-mid); border-radius: 6px; background: transparent; color: var(--rust); cursor: pointer; font-family: inherit; white-space: nowrap; transition: all 0.15s; }
+  .milestone-add-btn:hover { background: var(--rust-light); }
+
+  /* Collapsible linked festivals on project card */
+  .linked-fests { margin-top: 8px; border-top: 1px solid var(--sand-dark); padding-top: 8px; }
+  .linked-fests-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
+  .linked-fests-label { font-size: 10px; color: var(--ink-mid); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+  .linked-fests-body { margin-top: 5px; display: none; }
+  .linked-fests-body.open { display: block; }
+  .fest-pill { display: inline-flex; align-items: center; gap: 3px; background: var(--gold-light); color: var(--ink-mid); border-radius: 10px; padding: 2px 8px; font-size: 10px; margin: 2px; border: 1px solid #E8D8AA; }
+
+  /* Page log */
+  .page-log-section { border-top: 1px solid var(--sand-dark); padding-top: 0.8rem; margin-top: 0.5rem; }
+  .page-log-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
+  .page-log-label { font-size: 11px; color: var(--ink-mid); display: flex; align-items: center; gap: 5px; }
+  .page-log-toggle-icon { font-size: 13px; color: var(--ink-mid); transition: transform 0.2s; }
+  .page-log-toggle-icon.open { transform: rotate(180deg); }
+  .page-log-summary { font-size: 11px; color: var(--ink-mid); }
+  .page-log-body { margin-top: 0.6rem; display: none; }
+  .page-log-body.open { display: block; }
+  .page-log-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 0.6rem; table-layout: fixed; }
+  .page-log-table th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--ink-mid); padding: 4px 5px; border-bottom: 1px solid var(--sand-dark); }
+  .page-log-table td { padding: 5px 5px; border-bottom: 1px solid var(--sand); vertical-align: middle; }
+  .page-log-table tr:last-child td { border-bottom: none; }
+  .hit-badge { display: inline-block; width: 18px; height: 18px; border-radius: 50%; text-align: center; line-height: 18px; font-size: 10px; font-weight: 600; }
+  .hit-yes { background: var(--green-light); color: var(--green); }
+  .hit-no { background: #FDE8E4; color: #9B3A1A; }
+  .hit-pending { background: var(--sand-dark); color: var(--ink-mid); }
+  .log-bar-wrap { height: 5px; background: var(--sand-dark); border-radius: 3px; width: 100%; display: block; }
+  .log-bar-fill { height: 100%; border-radius: 3px; background: var(--green); }
+  .log-bar-fill.over { background: var(--rust); }
+  .actual-input { width: 44px; padding: 3px 5px; border: 1px solid var(--sand-dark); border-radius: 5px; font-size: 12px; text-align: center; background: var(--cream); color: var(--ink); font-family: inherit; }
+  .actual-input:focus { outline: 1px solid var(--rust-mid); }
+  .actual-input::placeholder { color: var(--ink-mid); font-style: italic; }
+  .add-week-row { display: flex; align-items: center; gap: 6px; padding: 6px 0 2px; border-top: 1px dashed var(--sand-dark); margin-top: 4px; }
+  .week-input { width: 50px; padding: 4px 6px; border: 1px solid var(--sand-dark); border-radius: 6px; font-size: 12px; text-align: center; background: var(--cream); color: var(--ink); font-family: inherit; }
+  .week-input:focus { outline: 1px solid var(--rust-mid); }
+  .week-input-label { font-size: 11px; color: var(--ink-mid); white-space: nowrap; }
+  .log-add-btn { padding: 4px 10px; font-size: 11px; border: 1px solid var(--rust-mid); border-radius: 6px; background: transparent; color: var(--rust); cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap; }
+  .log-add-btn:hover { background: var(--rust-light); }
+  .page-log-total { font-size: 11px; color: var(--ink-mid); padding-top: 4px; }
+
+  .notes-area { width: 100%; border: 1px solid var(--sand-dark); border-radius: 7px; padding: 7px; font-size: 12px; font-family: inherit; color: var(--ink); background: var(--cream); resize: vertical; min-height: 52px; margin-top: 8px; }
+  .notes-area:focus { outline: 1px solid var(--rust-mid); }
+  .inline-edit { border: none; background: transparent; font-family: inherit; color: var(--ink); font-size: 15px; font-weight: 600; width: 100%; }
+  .inline-edit:focus { outline: 1px solid var(--rust-mid); border-radius: 4px; background: var(--cream); padding: 1px 4px; }
+  .inline-edit-sm { border: none; background: transparent; font-family: inherit; color: var(--ink-mid); font-size: 11px; width: 100%; }
+  .inline-edit-sm:focus { outline: 1px solid var(--rust-mid); border-radius: 4px; background: var(--cream); }
+
+  /* Archive section */
+  .archive-section { margin-top: 2rem; }
+  .archive-toggle-btn { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-mid); background: none; border: none; cursor: pointer; font-family: inherit; padding: 4px 0; }
+  .archive-toggle-btn:hover { color: var(--ink); }
+  .archive-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; align-items: start; margin-top: 1rem; }
+
+  /* Festival table */
+  .festival-wrap { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 14px; overflow: hidden; }
+  .festival-table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
+  .festival-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--ink-mid); font-weight: 600; padding: 10px 12px; border-bottom: 1px solid var(--sand-dark); background: var(--sand); }
+  .festival-table td { padding: 10px 12px; border-bottom: 1px solid var(--sand); vertical-align: middle; }
+  .festival-table tr:last-child td { border-bottom: none; }
+  .festival-table tr:hover td { background: var(--sand); }
+  .fest-name-input, .fest-cell-input { font-size: 13px; color: var(--ink); border: none; background: transparent; width: 100%; font-family: inherit; }
+  .fest-name-input:focus, .fest-cell-input:focus { outline: 1px solid var(--rust-mid); border-radius: 4px; padding: 2px 5px; }
+  .project-link-select { font-size: 12px; border: 1px solid var(--sand-dark); border-radius: 6px; padding: 4px 6px; background: var(--cream); color: var(--ink); font-family: inherit; width: 100%; }
+  .project-link-select:focus { outline: 1px solid var(--rust-mid); }
+  .submitted-toggle { display: flex; align-items: center; justify-content: center; }
+  .toggle-track { width: 36px; height: 20px; border-radius: 10px; background: var(--sand-dark); border: 1px solid var(--sand-dark); cursor: pointer; position: relative; transition: background 0.2s, border-color 0.2s; flex-shrink: 0; }
+  .toggle-track.on { background: var(--green); border-color: var(--green); }
+  .toggle-thumb { width: 14px; height: 14px; border-radius: 50%; background: #fff; position: absolute; top: 2px; left: 2px; transition: left 0.2s; }
+  .toggle-track.on .toggle-thumb { left: 18px; }
+  .tip-box { margin-top: 1rem; padding: 1rem 1.1rem; background: var(--gold-light); border-radius: 10px; border: 1px solid #E8D8AA; font-size: 12px; color: var(--ink-mid); line-height: 1.6; }
+
+  @media (max-width: 700px) {
+    .projects-grid, .archive-grid { grid-template-columns: 1fr; }
+    .top-bar { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+    .overview-grid { grid-template-columns: 1fr 1fr; }
+    .festival-table th:nth-child(3), .festival-table td:nth-child(3) { display: none; }
+    .ms-dates { flex-direction: column; align-items: flex-end; }
+  }
+</style>
+</head>
+<body class="overview-active">
+<div class="banner">
+  <div class="banner-inner">
+    <div class="top-bar">
+      <div>
+        <div class="app-title">The Writer's Room</div>
+        <div class="app-subtitle">Maragh Media Project Tracker</div>
+      </div>
+      <nav class="nav">
+        <button class="nav-btn active" onclick="showTab('overview')">Overview</button>
+        <button class="nav-btn" onclick="showTab('projects')">Projects</button>
+        <button class="nav-btn" onclick="showTab('festivals')">Festivals</button>
+      </nav>
+    </div>
+  </div>
+</div>
+<div class="page-body">
+<div class="app">
+
+  <!-- Overview -->
+  <div id="tab-overview" class="section visible">
+    <div class="section-header"><span class="section-label">At a glance</span></div>
+    <div class="overview-grid">
+      <div class="stat-card"><div class="stat-num" id="stat-projects">3</div><div class="stat-label">Active projects</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-milestones" style="color:inherit">0</div><div class="stat-label">Milestones done</div></div>
+      <div class="stat-card"><div class="stat-num stat-num-sm" id="stat-festivals">0 out of 0</div><div class="stat-label">Festivals Submitted</div></div>
+    </div>
+    <div class="section-header" style="margin-top:0.25rem"><span class="section-label">Upcoming deadlines</span></div>
+    <div class="due-soon-list" id="due-soon-list">
+      <div class="empty-hint">Add festival deadlines or milestone dates to see them here</div>
+    </div>
+  </div>
+
+  <!-- Projects -->
+  <div id="tab-projects" class="section">
+    <div class="section-header">
+      <span class="section-label">Projects</span>
+      <button class="add-btn" onclick="addProject()"><i class="ti ti-plus"></i> Add project</button>
+    </div>
+    <div id="projects-container" class="projects-grid"></div>
+
+    <!-- Archived projects -->
+    <div class="archive-section" id="archive-section" style="display:none">
+      <button class="archive-toggle-btn" onclick="toggleArchiveView()">
+        <i class="ti ti-archive" style="font-size:14px"></i>
+        <span id="archive-toggle-label">Show archived projects</span>
+        <i class="ti ti-chevron-down" id="archive-chevron" style="font-size:13px;transition:transform 0.2s"></i>
+      </button>
+      <div id="archive-container" class="archive-grid" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- Festivals -->
+  <div id="tab-festivals" class="section">
+    <div class="section-header">
+      <span class="section-label">Festival tracker</span>
+      <button class="add-btn" onclick="addFestival()"><i class="ti ti-plus"></i> Add festival</button>
+    </div>
+    <div class="festival-wrap">
+      <table class="festival-table">
+        <thead>
+          <tr>
+            <th style="width:26%">Festival</th>
+            <th style="width:13%">Deadline</th>
+            <th style="width:9%">Fee</th>
+            <th style="width:20%">Linked project</th>
+            <th style="width:12%">Requirements</th>
+            <th style="width:9%;text-align:center">Submitted</th>
+            <th style="width:32px"></th>
+          </tr>
+        </thead>
+        <tbody id="festival-body"></tbody>
+      </table>
+      <div id="festival-empty" class="empty-hint">No festivals yet — add one above</div>
+    </div>
+    <div class="tip-box">
+      <i class="ti ti-info-circle" style="font-size:14px;vertical-align:-2px;margin-right:4px"></i>
+      <strong>Tip:</strong> Link each festival to a project and set a deadline — both will appear in the Overview so you never miss a submission window.
+    </div>
+  </div>
+</div>
+
+<script>
+const MILESTONES = ['Logline','Synopsis','Outline','First draft','Revisions','Final draft','Submission'];
+const COLORS = ['rust','sage','gold'];
+
+let projects = [
+  { id:1, title:'An American Appetite', type:'Feature film', color:'rust', milestones:MILESTONES.map(m=>({name:m,state:0,startDate:'',endDate:''})), pageLog:[], notes:'', archived:false },
+  { id:2, title:"I'll Meet You There", type:'Short film', color:'sage', milestones:MILESTONES.map(m=>({name:m,state:0,startDate:'',endDate:''})), pageLog:[], notes:'', archived:false },
+  { id:3, title:'Crybaby', type:'Short film', color:'gold', milestones:MILESTONES.map(m=>({name:m,state:0,startDate:'',endDate:''})), pageLog:[], notes:'', archived:false },
+];
+let festivals = [];
+let nextProjId = 4, nextFestId = 1;
+let logOpen = {}, festOpen = {};
+let dragState = null;
+let archiveVisible = false;
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showTab(tab) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('visible'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('visible');
+  document.querySelectorAll('.nav-btn').forEach(b=>{
+    if(b.textContent.trim().toLowerCase().startsWith(tab.slice(0,4))) b.classList.add('active');
+  });
+  if(tab==='overview') {
+    document.body.classList.add('overview-active');
+    updateOverview();
+  } else {
+    document.body.classList.remove('overview-active');
+  }
+}
+
+function getProgress(proj) {
+  if(!proj.milestones.length) return 0;
+  return Math.round((proj.milestones.filter(m=>m.state===2).length/proj.milestones.length)*100);
+}
+
+function renderProjectCard(proj, isArchived) {
+  const pct = getProgress(proj);
+  const linked = festivals.filter(f=>String(f.projectId)===String(proj.id));
+  const festPills = linked.map(f=>`<span class="fest-pill"><i class="ti ti-calendar-event" style="font-size:10px"></i>${esc(f.name||'Festival')}</span>`).join('');
+  const totalPages = proj.pageLog.reduce((a,e)=>a+(e.actual||0),0);
+  const weekCount = proj.pageLog.length;
+  const logIsOpen = !!logOpen[proj.id];
+  const festIsOpen = !!festOpen[proj.id];
+
+  const el = document.createElement('div');
+  el.className = `project-card ${proj.color}${isArchived?' archived':''}`;
+
+  const archiveBtn = isArchived
+    ? `<button class="icon-btn" onclick="unarchiveProject(${proj.id})" title="Restore project"><i class="ti ti-archive-off"></i></button>`
+    : `<button class="icon-btn" onclick="archiveProject(${proj.id})" title="Archive project"><i class="ti ti-archive"></i></button>`;
+
+  el.innerHTML = `
+    <div class="project-header">
+      <div style="flex:1;min-width:0">
+        <input class="inline-edit" value="${esc(proj.title)}" ${isArchived?'readonly':''} onchange="updateProject(${proj.id},'title',this.value)" />
+        <input class="inline-edit-sm" value="${esc(proj.type)}" ${isArchived?'readonly':''} onchange="updateProject(${proj.id},'type',this.value)" />
+        ${isArchived ? '<span class="archive-badge">Archived</span>' : ''}
+      </div>
+      <div class="project-actions">
+        ${archiveBtn}
+        ${!isArchived ? `<button class="icon-btn" onclick="deleteProject(${proj.id})" title="Delete project"><i class="ti ti-trash"></i></button>` : ''}
+      </div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-label"><span>Pipeline progress</span><span>${pct}%</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="milestones-wrap">
+      <div class="milestones" id="milestones-${proj.id}"></div>
+      ${!isArchived ? `
+      <div class="add-milestone-row">
+        <input class="milestone-name-input" id="new-ms-${proj.id}" placeholder="Add a milestone…" type="text" onkeydown="if(event.key==='Enter') addMilestone(${proj.id})" />
+        <button class="milestone-add-btn" onclick="addMilestone(${proj.id})">+ Add</button>
+      </div>` : ''}
+    </div>
+    <div class="page-log-section">
+      <div class="page-log-header" onclick="toggleLog(${proj.id})">
+        <span class="page-log-label">
+          <i class="ti ti-file-text" style="font-size:12px"></i> Page log
+          ${weekCount > 0 ? `<span style="font-size:10px;background:var(--sand-dark);padding:1px 6px;border-radius:8px;color:var(--ink-mid)">${weekCount} wk${weekCount!==1?'s':''}</span>` : ''}
+        </span>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${totalPages > 0 ? `<span class="page-log-summary">${totalPages} pages total</span>` : ''}
+          <i class="ti ti-chevron-down page-log-toggle-icon ${logIsOpen?'open':''}" id="log-icon-${proj.id}"></i>
+        </div>
+      </div>
+      <div class="page-log-body ${logIsOpen?'open':''}" id="log-body-${proj.id}">
+        <table class="page-log-table">
+          <thead><tr><th style="width:28px">Wk</th><th style="width:36px">Goal</th><th style="width:54px">Actual</th><th>Progress</th><th style="width:24px">Hit</th><th style="width:20px"></th></tr></thead>
+          <tbody id="log-tbody-${proj.id}"></tbody>
+        </table>
+        ${!isArchived ? `
+        <div class="add-week-row">
+          <span class="week-input-label">Goal</span>
+          <input class="week-input" type="number" min="0" id="log-goal-${proj.id}" placeholder="10" />
+          <span class="week-input-label">Actual</span>
+          <input class="week-input" type="number" min="0" id="log-actual-${proj.id}" placeholder="—" />
+          <button class="log-add-btn" onclick="addLogEntry(${proj.id})">+ Add week</button>
+        </div>` : ''}
+        ${weekCount > 0 ? `<div class="page-log-total">${totalPages} pages written across ${weekCount} week${weekCount!==1?'s':''}</div>` : ''}
+      </div>
+    </div>
+    ${linked.length ? `
+    <div class="linked-fests">
+      <div class="linked-fests-header" onclick="toggleFests(${proj.id})">
+        <span class="linked-fests-label">
+          <i class="ti ti-calendar-event" style="font-size:11px"></i>
+          Festivals (${linked.length})
+        </span>
+        <i class="ti ti-chevron-down" style="font-size:12px;color:var(--ink-mid);transition:transform 0.2s;${festIsOpen?'transform:rotate(180deg)':''}"></i>
+      </div>
+      <div class="linked-fests-body ${festIsOpen?'open':''}">${festPills}</div>
+    </div>` : ''}
+    <textarea class="notes-area" placeholder="Notes, ideas, reminders…" ${isArchived?'readonly':''} onchange="updateProject(${proj.id},'notes',this.value)">${esc(proj.notes)}</textarea>
+  `;
+
+  // Milestone rows
+  const mCont = el.querySelector(`#milestones-${proj.id}`);
+  proj.milestones.forEach((m, i) => {
+    const checkClass = m.state===2 ? 'done' : m.state===1 ? 'inprogress' : '';
+    const stateLabel = m.state===1 ? '<span class="milestone-state-label state-inprogress">In progress</span>' : '';
+    const row = document.createElement('div');
+    row.className = 'milestone-row';
+    if(!isArchived) { row.draggable = true; row.dataset.idx = i; }
+    row.innerHTML = `
+      ${!isArchived ? '<i class="ti ti-grip-vertical drag-handle" aria-hidden="true"></i>' : ''}
+      <div class="milestone-check ${checkClass}" ${!isArchived?`onclick="cycleMilestone(${proj.id},${i})" title="Click to cycle: not started → in progress → done" role="button" tabindex="0"`:''}>
+        <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3 5.5L8 1" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="milestone-content">
+        <div class="milestone-top">
+          <span class="milestone-name ${m.state===2?'done':''} ${m.state===1?'inprogress':''}">${esc(m.name)}</span>
+          ${stateLabel}
+        </div>
+        <div class="ms-dates">
+          <div class="ms-date-group">
+            <span class="ms-date-label">Start</span>
+            <input type="date" class="date-input" value="${m.startDate||''}" ${isArchived?'readonly':''} title="Start date" onchange="setMilestoneField(${proj.id},${i},'startDate',this.value)" />
+          </div>
+          <div class="ms-date-group">
+            <span class="ms-date-label">End</span>
+            <input type="date" class="date-input" value="${m.endDate||''}" ${isArchived?'readonly':''} title="End date" onchange="setMilestoneField(${proj.id},${i},'endDate',this.value)" />
+          </div>
+        </div>
+      </div>
+      ${!isArchived ? `<button class="milestone-del icon-btn" onclick="deleteMilestone(${proj.id},${i})" title="Remove milestone"><i class="ti ti-x" style="font-size:12px"></i></button>` : ''}
+    `;
+
+    if(!isArchived) {
+      row.addEventListener('dragstart', e => { dragState={projId:proj.id,fromIdx:i}; row.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+      row.addEventListener('dragend', () => { row.classList.remove('dragging'); mCont.querySelectorAll('.milestone-row').forEach(r=>r.classList.remove('drag-over')); });
+      row.addEventListener('dragover', e => { e.preventDefault(); mCont.querySelectorAll('.milestone-row').forEach(r=>r.classList.remove('drag-over')); row.classList.add('drag-over'); });
+      row.addEventListener('dragleave', () => row.classList.remove('drag-over'));
+      row.addEventListener('drop', e => {
+        e.preventDefault(); row.classList.remove('drag-over');
+        if(!dragState||dragState.projId!==proj.id) return;
+        if(dragState.fromIdx===i) return;
+        const p=projects.find(x=>x.id===proj.id);
+        const moved=p.milestones.splice(dragState.fromIdx,1)[0];
+        p.milestones.splice(i,0,moved);
+        dragState=null; renderProjects(); updateOverview();
+      });
+    }
+    mCont.appendChild(row);
+  });
+
+  // Page log rows
+  const logTbody = el.querySelector(`#log-tbody-${proj.id}`);
+  if(proj.pageLog.length===0) {
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td colspan="6" style="font-size:11px;color:var(--ink-mid);font-style:italic;padding:6px 5px">No weeks logged yet${isArchived?'':' — add one below'}</td>`;
+    logTbody.appendChild(tr);
+  } else {
+    proj.pageLog.forEach((entry,i) => {
+      const hasActual = entry.actual!==null&&entry.actual!==undefined&&entry.actual!=='';
+      const actual = hasActual?Number(entry.actual):null;
+      const barPct = (entry.goal>0&&actual!==null)?Math.min(100,Math.round((actual/entry.goal)*100)):0;
+      const isOver = actual!==null&&actual>entry.goal;
+      const hitHtml = actual===null?`<span class="hit-badge hit-pending">–</span>`:actual>=entry.goal?`<span class="hit-badge hit-yes">✓</span>`:`<span class="hit-badge hit-no">✗</span>`;
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td style="color:var(--ink-mid);font-size:11px">${i+1}</td>
+        <td style="font-size:12px">${entry.goal}</td>
+        <td>${isArchived?`<span style="font-size:12px">${actual!==null?actual:'—'}</span>`:`<input class="actual-input" type="number" min="0" value="${actual!==null?actual:''}" placeholder="—" onchange="updateLogActual(${proj.id},${i},this.value)" />`}</td>
+        <td><div class="log-bar-wrap"><div class="log-bar-fill ${isOver?'over':''}" style="width:${barPct}%"></div></div></td>
+        <td>${hitHtml}</td>
+        <td>${isArchived?'':'<button class="icon-btn" style="font-size:11px;padding:2px" onclick="deleteLogEntry('+proj.id+','+i+')" title="Remove week"><i class="ti ti-x"></i></button>'}</td>
+      `;
+      logTbody.appendChild(tr);
+    });
+  }
+
+  return el;
+}
+
+function renderProjects() {
+  const active = projects.filter(p=>!p.archived);
+  const archived = projects.filter(p=>p.archived);
+  const c = document.getElementById('projects-container');
+  c.innerHTML='';
+  active.forEach(proj=>c.appendChild(renderProjectCard(proj,false)));
+
+  const archSec = document.getElementById('archive-section');
+  if(archived.length>0) {
+    archSec.style.display='';
+    const archCont = document.getElementById('archive-container');
+    archCont.innerHTML='';
+    archived.forEach(proj=>archCont.appendChild(renderProjectCard(proj,true)));
+  } else {
+    archSec.style.display='none';
+    archiveVisible=false;
+    document.getElementById('archive-container').style.display='none';
+    document.getElementById('archive-chevron').style.transform='';
+    document.getElementById('archive-toggle-label').textContent='Show archived projects';
+  }
+}
+
+function toggleArchiveView() {
+  archiveVisible=!archiveVisible;
+  document.getElementById('archive-container').style.display=archiveVisible?'':'none';
+  document.getElementById('archive-chevron').style.transform=archiveVisible?'rotate(180deg)':'';
+  document.getElementById('archive-toggle-label').textContent=archiveVisible?'Hide archived projects':'Show archived projects';
+}
+
+function toggleFests(projId) {
+  festOpen[projId]=!festOpen[projId];
+  renderProjects();
+}
+
+function cycleMilestone(projId,idx) {
+  const proj=projects.find(p=>p.id==projId);
+  proj.milestones[idx].state=(proj.milestones[idx].state+1)%3;
+  renderProjects(); updateOverview();
+}
+
+function setMilestoneField(projId,idx,field,val) {
+  const proj=projects.find(p=>p.id==projId);
+  proj.milestones[idx][field]=val;
+  updateOverview();
+}
+
+function addMilestone(projId) {
+  const input=document.getElementById(`new-ms-${projId}`);
+  const name=input.value.trim();
+  if(!name) return;
+  const proj=projects.find(p=>p.id==projId);
+  proj.milestones.push({name,state:0,startDate:'',endDate:''});
+  input.value='';
+  renderProjects(); updateOverview();
+}
+
+function deleteMilestone(projId,idx) {
+  const proj=projects.find(p=>p.id==projId);
+  proj.milestones.splice(idx,1);
+  renderProjects(); updateOverview();
+}
+
+function toggleLog(projId) {
+  logOpen[projId]=!logOpen[projId];
+  renderProjects();
+}
+
+function addLogEntry(projId) {
+  const goalEl=document.getElementById(`log-goal-${projId}`);
+  const actualEl=document.getElementById(`log-actual-${projId}`);
+  const goal=parseInt(goalEl.value);
+  if(!goal||goal<=0){goalEl.focus();return;}
+  const actualVal=actualEl.value.trim();
+  const actual=actualVal!==''?parseInt(actualVal):null;
+  const proj=projects.find(p=>p.id==projId);
+  proj.pageLog.push({goal,actual});
+  goalEl.value=''; actualEl.value='';
+  logOpen[projId]=true;
+  renderProjects();
+}
+
+function updateLogActual(projId,idx,val) {
+  const proj=projects.find(p=>p.id==projId);
+  proj.pageLog[idx].actual=val.trim()!==''?parseInt(val):null;
+  logOpen[projId]=true;
+  renderProjects();
+}
+
+function deleteLogEntry(projId,idx) {
+  const proj=projects.find(p=>p.id==projId);
+  proj.pageLog.splice(idx,1);
+  logOpen[projId]=true;
+  renderProjects();
+}
+
+function updateProject(id,field,val) {
+  const proj=projects.find(p=>p.id==id);
+  if(proj) proj[field]=val;
+}
+
+function archiveProject(id) {
+  const proj=projects.find(p=>p.id==id);
+  if(proj){proj.archived=true;}
+  renderProjects(); updateOverview();
+}
+
+function unarchiveProject(id) {
+  const proj=projects.find(p=>p.id==id);
+  if(proj){proj.archived=false;}
+  renderProjects(); updateOverview();
+}
+
+function deleteProject(id) {
+  if(!confirm('Permanently delete this project?')) return;
+  projects=projects.filter(p=>p.id!=id);
+  festivals.forEach(f=>{if(String(f.projectId)===String(id))f.projectId='';});
+  renderProjects(); renderFestivals(); updateOverview();
+}
+
+function addProject() {
+  const col=COLORS[projects.filter(p=>!p.archived).length%COLORS.length];
+  projects.push({id:nextProjId++,title:'New project',type:'Feature film',color:col,milestones:MILESTONES.map(m=>({name:m,state:0,startDate:'',endDate:''})),pageLog:[],notes:'',archived:false});
+  renderProjects(); updateOverview(); showTab('projects');
+}
+
+function renderFestivals() {
+  const tbody=document.getElementById('festival-body');
+  const empty=document.getElementById('festival-empty');
+  tbody.innerHTML='';
+  if(!festivals.length){empty.style.display='';return;}
+  empty.style.display='none';
+  festivals.forEach(f=>{
+    const projOpts=projects.map(p=>`<option value="${p.id}" ${String(f.projectId)===String(p.id)?'selected':''}>${esc(p.title)}</option>`).join('');
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><input class="fest-name-input" value="${esc(f.name)}" placeholder="Festival name" onchange="updateFestival(${f.id},'name',this.value)" /></td>
+      <td><input type="date" class="fest-cell-input" value="${f.deadline}" onchange="updateFestival(${f.id},'deadline',this.value)" /></td>
+      <td><input class="fest-cell-input" value="${esc(f.cost)}" placeholder="$0" onchange="updateFestival(${f.id},'cost',this.value)" /></td>
+      <td><select class="project-link-select" onchange="updateFestival(${f.id},'projectId',this.value)"><option value="">— none —</option>${projOpts}</select></td>
+      <td><input class="fest-cell-input" value="${esc(f.requirements)}" placeholder="e.g. 15 min max" onchange="updateFestival(${f.id},'requirements',this.value)" /></td>
+      <td class="submitted-toggle"><div class="toggle-track ${f.submitted?'on':''}" onclick="toggleSubmitted(${f.id})" title="${f.submitted?'Mark as not submitted':'Mark as submitted'}"><div class="toggle-thumb"></div></div></td>
+      <td><button class="icon-btn" onclick="deleteFestival(${f.id})" title="Remove"><i class="ti ti-x" style="font-size:13px"></i></button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+  updateOverview();
+}
+
+function updateFestival(id,field,val) {
+  const f=festivals.find(x=>x.id==id);
+  if(f){f[field]=val;renderFestivals();renderProjects();}
+}
+
+function toggleSubmitted(id) {
+  const f=festivals.find(x=>x.id==id);
+  if(f){f.submitted=!f.submitted;renderFestivals();updateOverview();}
+}
+
+function deleteFestival(id) {
+  festivals=festivals.filter(x=>x.id!=id);
+  renderFestivals(); renderProjects(); updateOverview();
+}
+
+function addFestival() {
+  festivals.push({id:nextFestId++,name:'',deadline:'',cost:'',projectId:'',requirements:'',submitted:false});
+  renderFestivals(); showTab('festivals');
+}
+
+function deadlineUrgency(dateStr) {
+  if(!dateStr) return null;
+  const diff=(new Date(dateStr)-new Date())/(1000*60*60*24);
+  if(diff<14) return 'urgent';
+  if(diff<45) return 'soon';
+  return 'ok';
+}
+
+function deadlineDaysLabel(dateStr) {
+  if(!dateStr) return '';
+  const diff=Math.ceil((new Date(dateStr)-new Date())/(1000*60*60*24));
+  if(diff<0) return 'Past due';
+  if(diff===0) return 'Today';
+  if(diff===1) return 'Tomorrow';
+  return `${diff}d away`;
+}
+
+function updateOverview() {
+  const activeProjects=projects.filter(p=>!p.archived);
+  const done=activeProjects.reduce((a,p)=>a+p.milestones.filter(m=>m.state===2).length,0);
+  const submitted=festivals.filter(f=>f.submitted).length;
+  const total=festivals.length;
+  document.getElementById('stat-projects').textContent=activeProjects.length;
+  document.getElementById('stat-milestones').textContent=done;
+  document.getElementById('stat-festivals').textContent=`${submitted} out of ${total}`;
+  const list=document.getElementById('due-soon-list');
+  const items=[];
+  // Festival deadlines — exclude submitted
+  [...festivals].filter(f=>f.deadline&&!f.submitted).sort((a,b)=>new Date(a.deadline)-new Date(b.deadline)).slice(0,6).forEach(f=>{
+    const proj=projects.find(p=>String(p.id)===String(f.projectId));
+    const urg=deadlineUrgency(f.deadline);
+    const badge=urg?`<span class="deadline-badge deadline-${urg}">${deadlineDaysLabel(f.deadline)}</span>`:'';
+    items.push(`<div class="due-soon-item"><div><div class="due-item-name">${esc(f.name)||'Unnamed festival'}</div><div class="due-item-project">${proj?esc(proj.title):'No project linked'} · ${f.deadline}</div></div>${badge}</div>`);
+  });
+  // Milestone end dates — exclude completed (state===2) and archived projects
+  activeProjects.forEach(p=>{
+    p.milestones.filter(m=>m.endDate&&m.state!==2).sort((a,b)=>new Date(a.endDate)-new Date(b.endDate)).slice(0,3).forEach(m=>{
+      const urg=deadlineUrgency(m.endDate);
+      const badge=urg?`<span class="deadline-badge deadline-${urg}">${deadlineDaysLabel(m.endDate)}</span>`:'';
+      items.push(`<div class="due-soon-item"><div><div class="due-item-name">${esc(m.name)}</div><div class="due-item-project">${esc(p.title)} · ${m.endDate}</div></div>${badge}</div>`);
+    });
+  });
+  list.innerHTML=items.length?items.join(''):'<div class="empty-hint">Add milestone end dates or festival deadlines to see them here</div>';
+}
+
+renderProjects();
+renderFestivals();
+updateOverview();
+</script>
+</div><!-- .app -->
+</div><!-- .page-body -->
+</body>
+</html>
