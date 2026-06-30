@@ -108,6 +108,8 @@
   .proj-drag-handle { cursor: grab; color: var(--ink-mid); font-size: 16px; opacity: 0.4; flex-shrink: 0; display: flex; align-items: center; padding: 2px; }
   .proj-drag-handle:hover { opacity: 0.8; }
   .proj-drag-handle:active { cursor: grabbing; }
+  /* Prevent inputs, buttons, textareas from accidentally triggering card drag */
+  .project-card input, .project-card button, .project-card textarea, .project-card select { -webkit-user-drag: none; }
   .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.1rem; align-items: start; }
   .project-card { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 14px; padding: 1.1rem; border-top: 5px solid var(--rust); }
   .project-card.sage { border-top-color: var(--sage); }
@@ -666,14 +668,13 @@ function renderProjects() {
     el.draggable = true;
 
     el.addEventListener('dragstart', e => {
-      // Only start drag from the handle
-      if (!e.target.closest('.proj-drag-handle')) { e.preventDefault(); return; }
       projDragState = proj.id;
-      el.classList.add('proj-dragging');
+      setTimeout(() => el.classList.add('proj-dragging'), 0);
       e.dataTransfer.effectAllowed = 'move';
     });
     el.addEventListener('dragend', () => {
       el.classList.remove('proj-dragging');
+      projDragState = null;
       document.querySelectorAll('.project-card').forEach(c => c.classList.remove('proj-drag-over'));
     });
     el.addEventListener('dragover', e => {
