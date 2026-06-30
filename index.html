@@ -93,7 +93,21 @@
   .empty-hint { font-size: 13px; color: var(--ink-mid); text-align: center; padding: 2rem; font-style: italic; }
   body.overview-active .empty-hint { color: rgba(255,255,255,0.5); }
 
-  /* Projects grid */
+  /* Project card collapse/expand */
+  .project-card-body { display: block; }
+  .project-card-body.collapsed { display: none; }
+  .project-collapse-btn { background: none; border: none; cursor: pointer; color: var(--ink-mid); padding: 4px; border-radius: 6px; transition: all 0.15s; font-size: 15px; min-width: 28px; min-height: 28px; display: flex; align-items: center; justify-content: center; }
+  .project-collapse-btn:hover { background: var(--sand-dark); color: var(--ink); }
+  .project-collapse-icon { transition: transform 0.2s; }
+  .project-collapse-icon.collapsed { transform: rotate(-90deg); }
+
+  /* Project card drag-to-reorder */
+  .project-card { cursor: default; transition: box-shadow 0.15s, opacity 0.15s; }
+  .project-card.proj-dragging { opacity: 0.4; box-shadow: none; }
+  .project-card.proj-drag-over { box-shadow: 0 0 0 2px var(--blue), 0 4px 16px rgba(59,125,216,0.15); }
+  .proj-drag-handle { cursor: grab; color: var(--ink-mid); font-size: 16px; opacity: 0.4; flex-shrink: 0; display: flex; align-items: center; padding: 2px; }
+  .proj-drag-handle:hover { opacity: 0.8; }
+  .proj-drag-handle:active { cursor: grabbing; }
   .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.1rem; align-items: start; }
   .project-card { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 14px; padding: 1.1rem; border-top: 5px solid var(--rust); }
   .project-card.sage { border-top-color: var(--sage); }
@@ -355,8 +369,9 @@ const COLORS = ['rust','sage','gold'];
 let projects = [];
 let festivals = [];
 let nextProjId = 1, nextFestId = 1;
-let logOpen = {}, festOpen = {};
+let logOpen = {}, festOpen = {}, projCollapsed = {};
 let dragState = null;
+let projDragState = null;
 let archiveVisible = false;
 let dataLoaded = false;
 let isDirty = false;
@@ -486,7 +501,13 @@ function renderProjectCard(proj, isArchived) {
 
   el.innerHTML = `
     <div class="project-header">
-      <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="proj-drag-handle" title="Drag to reorder"><i class="ti ti-grip-vertical"></i></div>
+        <button class="project-collapse-btn" onclick="toggleProjectCollapse(${proj.id})" title="Collapse/expand">
+          <i class="ti ti-chevron-down project-collapse-icon ${projCollapsed[proj.id]?'collapsed':''}"></i>
+        </button>
+      </div>
+      <div style="flex:1;min-width:0;margin-left:4px">
         <input class="inline-edit" value="${esc(proj.title)}" ${isArchived?'readonly':''} onchange="updateProject(${proj.id},'title',this.value)" />
         <input class="inline-edit-sm" value="${esc(proj.type)}" ${isArchived?'readonly':''} onchange="updateProject(${proj.id},'type',this.value)" />
         ${isArchived?'<span class="archive-badge">Archived</span>':''}
@@ -496,6 +517,7 @@ function renderProjectCard(proj, isArchived) {
         ${!isArchived?`<button class="icon-btn" onclick="deleteProject(${proj.id})" title="Delete"><i class="ti ti-trash"></i></button>`:''}
       </div>
     </div>
+    <div class="project-card-body ${projCollapsed[proj.id]?'collapsed':''}">
     <div class="progress-bar-wrap">
       <div class="progress-bar-label"><span>Pipeline progress</span><span>${pct}%</span></div>
       <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
@@ -544,6 +566,7 @@ function renderProjectCard(proj, isArchived) {
       <div class="linked-fests-body ${festIsOpen?'open':''}">${festPills}</div>
     </div>`:''}
     <textarea class="notes-area" placeholder="Notes, ideas, reminders…" ${isArchived?'readonly':''} onchange="updateProject(${proj.id},'notes',this.value)">${esc(proj.notes)}</textarea>
+    </div>
   `;
 
   // Milestone rows
@@ -626,12 +649,55 @@ function renderProjectCard(proj, isArchived) {
   return el;
 }
 
+function toggleProjectCollapse(projId) {
+  projCollapsed[projId] = !projCollapsed[projId];
+  renderProjects();
+}
+window.toggleProjectCollapse = toggleProjectCollapse;
+
 function renderProjects() {
-  const active=projects.filter(p=>!p.archived);
-  const archived=projects.filter(p=>p.archived);
-  const c=document.getElementById('projects-container');
-  c.innerHTML='';
-  active.forEach(p=>c.appendChild(renderProjectCard(p,false)));
+  const active = projects.filter(p=>!p.archived);
+  const archived = projects.filter(p=>p.archived);
+  const c = document.getElementById('projects-container');
+  c.innerHTML = '';
+
+  active.forEach(proj => {
+    const el = renderProjectCard(proj, false);
+    el.draggable = true;
+
+    el.addEventListener('dragstart', e => {
+      // Only start drag from the handle
+      if (!e.target.closest('.proj-drag-handle')) { e.preventDefault(); return; }
+      projDragState = proj.id;
+      el.classList.add('proj-dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    el.addEventListener('dragend', () => {
+      el.classList.remove('proj-dragging');
+      document.querySelectorAll('.project-card').forEach(c => c.classList.remove('proj-drag-over'));
+    });
+    el.addEventListener('dragover', e => {
+      if (projDragState == null || projDragState === proj.id) return;
+      e.preventDefault();
+      document.querySelectorAll('.project-card').forEach(c => c.classList.remove('proj-drag-over'));
+      el.classList.add('proj-drag-over');
+    });
+    el.addEventListener('dragleave', () => el.classList.remove('proj-drag-over'));
+    el.addEventListener('drop', e => {
+      e.preventDefault();
+      el.classList.remove('proj-drag-over');
+      if (projDragState == null || projDragState === proj.id) return;
+      const fromIdx = projects.findIndex(p => p.id === projDragState);
+      const toIdx = projects.findIndex(p => p.id === proj.id);
+      if (fromIdx === -1 || toIdx === -1) return;
+      const moved = projects.splice(fromIdx, 1)[0];
+      projects.splice(toIdx, 0, moved);
+      projDragState = null;
+      renderProjects(); updateOverview(); markDirty();
+    });
+
+    c.appendChild(el);
+  });
   const archSec=document.getElementById('archive-section');
   if(archived.length>0){
     archSec.style.display='';
