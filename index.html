@@ -108,6 +108,13 @@
   .project-card-body { margin-top: 0.8rem; }
   .project-card-body.is-collapsed { display: none; }
 
+  /* Drag handle — only visible on collapsed cards */
+  .proj-drag-handle { cursor: grab; color: var(--ink-mid); opacity: 0.4; font-size: 16px; display: none; align-items: center; flex-shrink: 0; padding: 2px; user-select: none; }
+  .proj-drag-handle:hover { opacity: 1; }
+  .proj-drag-handle.visible { display: flex; }
+  .project-card.sort-ghost { opacity: 0.35; box-shadow: none; }
+  .project-card.sort-over { box-shadow: 0 0 0 2px var(--blue); }
+
   .progress-bar-wrap { margin-bottom: 0.8rem; }
   .progress-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-mid); margin-bottom: 4px; }
   .progress-bar { height: 6px; background: var(--sand-dark); border-radius: 3px; }
@@ -465,6 +472,7 @@ function renderProjectCard(proj, isArchived) {
 
   const el = document.createElement('div');
   el.className = `project-card ${proj.color}${isArchived?' archived':''}`;
+  el.dataset.projId = proj.id;
 
   const archiveBtn = isArchived
     ? `<button class="icon-btn" onclick="unarchiveProject(${proj.id})" title="Restore project"><i class="ti ti-archive-off"></i></button>`
@@ -472,6 +480,7 @@ function renderProjectCard(proj, isArchived) {
 
   el.innerHTML = `
     <div class="project-header">
+      <i class="ti ti-grip-vertical proj-drag-handle ${collapsed?'visible':''}" title="Drag to reorder"></i>
       <button class="project-collapse-btn" onclick="toggleProjectCollapse(${proj.id})" title="${collapsed?'Expand':'Collapse'}">
         <i class="ti ti-chevron-down collapse-icon ${collapsed?'is-collapsed':''}"></i>
       </button>
@@ -618,11 +627,51 @@ function renderProjectCard(proj, isArchived) {
 }
 
 function renderProjects() {
-  const active=projects.filter(p=>!p.archived);
-  const archived=projects.filter(p=>p.archived);
-  const c=document.getElementById('projects-container');
-  c.innerHTML='';
-  active.forEach(p=>c.appendChild(renderProjectCard(p,false)));
+  const active = projects.filter(p=>!p.archived);
+  const archived = projects.filter(p=>p.archived);
+  const c = document.getElementById('projects-container');
+  c.innerHTML = '';
+  active.forEach(p => c.appendChild(renderProjectCard(p, false)));
+
+  // Wire up project card sorting via drag handle
+  let dragSrcId = null;
+  c.querySelectorAll('.proj-drag-handle').forEach(handle => {
+    const card = handle.closest('.project-card');
+    handle.addEventListener('mousedown', () => { card.draggable = true; });
+    handle.addEventListener('mouseup', () => { card.draggable = false; });
+  });
+  c.querySelectorAll('.project-card').forEach(card => {
+    card.addEventListener('dragstart', e => {
+      dragSrcId = Number(card.dataset.projId);
+      setTimeout(() => card.classList.add('sort-ghost'), 0);
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    card.addEventListener('dragend', () => {
+      card.draggable = false;
+      card.classList.remove('sort-ghost');
+      c.querySelectorAll('.project-card').forEach(c2 => c2.classList.remove('sort-over'));
+      dragSrcId = null;
+    });
+    card.addEventListener('dragover', e => {
+      if (dragSrcId === null || dragSrcId === Number(card.dataset.projId)) return;
+      e.preventDefault();
+      c.querySelectorAll('.project-card').forEach(c2 => c2.classList.remove('sort-over'));
+      card.classList.add('sort-over');
+    });
+    card.addEventListener('dragleave', () => card.classList.remove('sort-over'));
+    card.addEventListener('drop', e => {
+      e.preventDefault();
+      card.classList.remove('sort-over');
+      const toId = Number(card.dataset.projId);
+      if (dragSrcId === null || dragSrcId === toId) return;
+      const fromIdx = projects.findIndex(p => p.id === dragSrcId);
+      const toIdx = projects.findIndex(p => p.id === toId);
+      if (fromIdx === -1 || toIdx === -1) return;
+      const moved = projects.splice(fromIdx, 1)[0];
+      projects.splice(toIdx, 0, moved);
+      renderProjects(); updateOverview(); markDirty();
+    });
+  });
   const archSec=document.getElementById('archive-section');
   if(archived.length>0){
     archSec.style.display='';
