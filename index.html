@@ -37,6 +37,12 @@
   .save-indicator.saving { color: #FFD97D; }
   .save-indicator.saved { color: #A8E6C8; }
   .save-indicator.error { color: #FFB3A7; }
+  .save-indicator.dirty { color: #FFD97D; }
+  .save-btn { display: flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 8px; font-size: 13px; cursor: pointer; border: none; background: var(--rust); color: #fff; font-family: inherit; transition: all 0.15s; font-weight: 500; }
+  .save-btn:hover { background: var(--rust-mid); }
+  .save-btn:disabled { background: var(--sand-dark); color: var(--ink-mid); cursor: default; }
+  .save-btn.unsaved { background: var(--gold); }
+  .save-btn.unsaved:hover { background: #B5852E; }
   .save-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
   .nav { display: flex; gap: 4px; flex-wrap: wrap; }
@@ -243,9 +249,9 @@
         <div class="app-subtitle">Maragh Media Project Tracker</div>
       </div>
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-        <div class="save-indicator" id="save-indicator">
+        <div class="save-indicator" id="save-indicator-banner" style="display:none">
           <div class="save-dot"></div>
-          <span id="save-text">Loading…</span>
+          <span id="save-text-banner">Loading…</span>
         </div>
         <nav class="nav">
           <button class="nav-btn active" onclick="showTab('overview')">Overview</button>
@@ -278,7 +284,14 @@
   <div id="tab-projects" class="section">
     <div class="section-header">
       <span class="section-label">Projects</span>
-      <button class="add-btn" onclick="addProject()"><i class="ti ti-plus"></i> Add project</button>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="save-indicator" id="save-indicator-projects" style="color:var(--ink-mid)">
+          <span class="save-dot" style="background:currentColor"></span>
+          <span id="save-text-projects">All changes saved</span>
+        </span>
+        <button class="save-btn" id="save-btn-projects" onclick="saveNow()"><i class="ti ti-device-floppy"></i> Save</button>
+        <button class="add-btn" onclick="addProject()"><i class="ti ti-plus"></i> Add project</button>
+      </div>
     </div>
     <div id="projects-container" class="projects-grid"></div>
     <div class="archive-section" id="archive-section" style="display:none">
@@ -295,7 +308,14 @@
   <div id="tab-festivals" class="section">
     <div class="section-header">
       <span class="section-label">Festival tracker</span>
-      <button class="add-btn" onclick="addFestival()"><i class="ti ti-plus"></i> Add festival</button>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="save-indicator" id="save-indicator-festivals" style="color:var(--ink-mid)">
+          <span class="save-dot" style="background:currentColor"></span>
+          <span id="save-text-festivals">All changes saved</span>
+        </span>
+        <button class="save-btn" id="save-btn-festivals" onclick="saveNow()"><i class="ti ti-device-floppy"></i> Save</button>
+        <button class="add-btn" onclick="addFestival()"><i class="ti ti-plus"></i> Add festival</button>
+      </div>
     </div>
     <div id="festival-cards" class="festival-cards"></div>
     <div id="festival-empty" class="empty-hint" style="display:none">No festivals yet — add one above</div>
@@ -338,34 +358,56 @@ let nextProjId = 1, nextFestId = 1;
 let logOpen = {}, festOpen = {};
 let dragState = null;
 let archiveVisible = false;
-let saveTimer = null;
 let dataLoaded = false;
+let isDirty = false;
 
 // ── Utility ──
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ── Save indicator ──
+// ── Save indicator (updates both page indicators + buttons) ──
 function setSaveState(state, msg) {
-  const el = document.getElementById('save-indicator');
-  const txt = document.getElementById('save-text');
-  el.className = 'save-indicator ' + state;
-  txt.textContent = msg;
+  ['projects','festivals'].forEach(page => {
+    const el = document.getElementById(`save-indicator-${page}`);
+    const txt = document.getElementById(`save-text-${page}`);
+    const btn = document.getElementById(`save-btn-${page}`);
+    if (el) { el.className = 'save-indicator ' + state; el.style.color = ''; }
+    if (txt) txt.textContent = msg;
+    if (btn) {
+      if (state === 'dirty') { btn.classList.add('unsaved'); btn.disabled = false; }
+      else if (state === 'saving') { btn.disabled = true; btn.classList.remove('unsaved'); }
+      else { btn.disabled = false; btn.classList.remove('unsaved'); }
+    }
+  });
 }
 
-// ── Firebase save (debounced 1.5s) ──
-function scheduleSave() {
+// ── Mark unsaved changes (replaces old auto-save) ──
+function markDirty() {
+  if (!dataLoaded) return;
+  isDirty = true;
+  setSaveState('dirty', 'Unsaved changes');
+}
+
+// ── Manual save, triggered by Save button ──
+function saveNow() {
   if (!dataLoaded) return;
   setSaveState('saving', 'Saving…');
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    const payload = { projects, festivals, nextProjId, nextFestId };
-    set(DATA_REF, payload)
-      .then(() => setSaveState('saved', 'All changes saved ✓'))
-      .catch(() => setSaveState('error', 'Save failed — check connection'));
-  }, 1500);
+  const payload = { projects, festivals, nextProjId, nextFestId };
+  set(DATA_REF, payload)
+    .then(() => { isDirty = false; setSaveState('saved', 'All changes saved ✓'); })
+    .catch(() => { setSaveState('error', 'Save failed — try again'); });
 }
+window.saveNow = saveNow;
+
+// Warn before leaving the page with unsaved changes
+window.addEventListener('beforeunload', (e) => {
+  if (isDirty) {
+    e.preventDefault();
+    e.returnValue = '';
+    return '';
+  }
+});
 
 // ── Firebase load ──
 onValue(DATA_REF, (snapshot) => {
@@ -537,7 +579,7 @@ function renderProjectCard(proj, isArchived) {
         const p=projects.find(x=>x.id===proj.id);
         const moved=p.milestones.splice(dragState.fromIdx,1)[0];
         p.milestones.splice(i,0,moved);
-        dragState=null; renderProjects(); updateOverview(); scheduleSave();
+        dragState=null; renderProjects(); updateOverview(); markDirty();
       });
     }
     mCont.appendChild(row);
@@ -645,14 +687,14 @@ function renderFestivals() {
 function cycleMilestone(projId,idx){
   const proj=projects.find(p=>p.id==projId);
   proj.milestones[idx].state=(proj.milestones[idx].state+1)%3;
-  renderProjects(); updateOverview(); scheduleSave();
+  renderProjects(); updateOverview(); markDirty();
 }
 window.cycleMilestone=cycleMilestone;
 
 function setMilestoneField(projId,idx,field,val){
   const proj=projects.find(p=>p.id==projId);
   proj.milestones[idx][field]=val;
-  updateOverview(); scheduleSave();
+  updateOverview(); markDirty();
 }
 window.setMilestoneField=setMilestoneField;
 
@@ -663,33 +705,33 @@ function addMilestone(projId){
   const proj=projects.find(p=>p.id==projId);
   proj.milestones.push({name,state:0,startDate:'',endDate:''});
   input.value='';
-  renderProjects(); updateOverview(); scheduleSave();
+  renderProjects(); updateOverview(); markDirty();
 }
 window.addMilestone=addMilestone;
 
 function deleteMilestone(projId,idx){
   const proj=projects.find(p=>p.id==projId);
   proj.milestones.splice(idx,1);
-  renderProjects(); updateOverview(); scheduleSave();
+  renderProjects(); updateOverview(); markDirty();
 }
 window.deleteMilestone=deleteMilestone;
 
 // ── Project actions ──
 function updateProject(id,field,val){
   const proj=projects.find(p=>p.id==id);
-  if(proj){ proj[field]=val; scheduleSave(); }
+  if(proj){ proj[field]=val; markDirty(); }
 }
 window.updateProject=updateProject;
 
 function archiveProject(id){
   const proj=projects.find(p=>p.id==id);
-  if(proj){ proj.archived=true; renderProjects(); updateOverview(); scheduleSave(); }
+  if(proj){ proj.archived=true; renderProjects(); updateOverview(); markDirty(); }
 }
 window.archiveProject=archiveProject;
 
 function unarchiveProject(id){
   const proj=projects.find(p=>p.id==id);
-  if(proj){ proj.archived=false; renderProjects(); updateOverview(); scheduleSave(); }
+  if(proj){ proj.archived=false; renderProjects(); updateOverview(); markDirty(); }
 }
 window.unarchiveProject=unarchiveProject;
 
@@ -697,14 +739,14 @@ function deleteProject(id){
   if(!confirm('Permanently delete this project?')) return;
   projects=projects.filter(p=>p.id!=id);
   festivals.forEach(f=>{ if(String(f.projectId)===String(id)) f.projectId=''; });
-  renderProjects(); renderFestivals(); updateOverview(); scheduleSave();
+  renderProjects(); renderFestivals(); updateOverview(); markDirty();
 }
 window.deleteProject=deleteProject;
 
 function addProject(){
   const col=COLORS[projects.filter(p=>!p.archived).length%COLORS.length];
   projects.push({id:nextProjId++,title:'New project',type:'Feature film',color:col,milestones:MILESTONES.map(m=>({name:m,state:0,startDate:'',endDate:''})),pageLog:[],notes:'',archived:false});
-  renderProjects(); updateOverview(); showTab('projects'); scheduleSave();
+  renderProjects(); updateOverview(); showTab('projects'); markDirty();
 }
 window.addProject=addProject;
 
@@ -734,7 +776,7 @@ function addLogEntry(projId){
   proj.pageLog.push({goal,actual});
   goalEl.value=''; actualEl.value='';
   logOpen[projId]=true;
-  renderProjects(); scheduleSave();
+  renderProjects(); markDirty();
 }
 window.addLogEntry=addLogEntry;
 
@@ -742,7 +784,7 @@ function updateLogActual(projId,idx,val){
   const proj=projects.find(p=>p.id==projId);
   proj.pageLog[idx].actual=val.trim()!==''?parseInt(val):null;
   logOpen[projId]=true;
-  renderProjects(); scheduleSave();
+  renderProjects(); markDirty();
 }
 window.updateLogActual=updateLogActual;
 
@@ -750,32 +792,32 @@ function deleteLogEntry(projId,idx){
   const proj=projects.find(p=>p.id==projId);
   proj.pageLog.splice(idx,1);
   logOpen[projId]=true;
-  renderProjects(); scheduleSave();
+  renderProjects(); markDirty();
 }
 window.deleteLogEntry=deleteLogEntry;
 
 // ── Festival actions ──
 function updateFestival(id,field,val){
   const f=festivals.find(x=>x.id==id);
-  if(f){ f[field]=val; renderFestivals(); renderProjects(); scheduleSave(); }
+  if(f){ f[field]=val; renderFestivals(); renderProjects(); markDirty(); }
 }
 window.updateFestival=updateFestival;
 
 function toggleSubmitted(id){
   const f=festivals.find(x=>x.id==id);
-  if(f){ f.submitted=!f.submitted; renderFestivals(); updateOverview(); scheduleSave(); }
+  if(f){ f.submitted=!f.submitted; renderFestivals(); updateOverview(); markDirty(); }
 }
 window.toggleSubmitted=toggleSubmitted;
 
 function deleteFestival(id){
   festivals=festivals.filter(x=>x.id!=id);
-  renderFestivals(); renderProjects(); updateOverview(); scheduleSave();
+  renderFestivals(); renderProjects(); updateOverview(); markDirty();
 }
 window.deleteFestival=deleteFestival;
 
 function addFestival(){
   festivals.push({id:nextFestId++,name:'',deadline:'',cost:'',projectId:'',requirements:'',submitted:false});
-  renderFestivals(); showTab('festivals'); scheduleSave();
+  renderFestivals(); showTab('festivals'); markDirty();
 }
 window.addFestival=addFestival;
 
