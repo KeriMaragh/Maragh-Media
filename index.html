@@ -414,6 +414,12 @@ onValue(DATA_REF, (snapshot) => {
   const data = snapshot.val();
   if (data) {
     projects = data.projects || [];
+    projects.forEach(p => {
+      p.milestones = p.milestones || [];
+      p.pageLog = p.pageLog || [];
+      p.notes = p.notes || '';
+      p.archived = !!p.archived;
+    });
     festivals = data.festivals || [];
     nextProjId = data.nextProjId || (projects.length + 1);
     nextFestId = data.nextFestId || (festivals.length + 1);
@@ -456,6 +462,13 @@ function getProgress(proj) {
 
 // ── Render project card ──
 function renderProjectCard(proj, isArchived) {
+  // Defensive defaults — handles older/incomplete records saved before these fields existed
+  proj.milestones = proj.milestones || [];
+  proj.pageLog = proj.pageLog || [];
+  proj.notes = proj.notes || '';
+  proj.type = proj.type || '';
+  proj.color = proj.color || 'rust';
+
   const pct = getProgress(proj);
   const linked = festivals.filter(f=>String(f.projectId)===String(proj.id));
   const festPills = linked.map(f=>`<span class="fest-pill"><i class="ti ti-calendar-event" style="font-size:10px"></i>${esc(f.name||'Festival')}</span>`).join('');
