@@ -25,14 +25,12 @@
   body.overview-active { background: var(--teal-bg); }
   body.overview-active .banner { background: transparent; }
 
-  /* Banner */
   .banner { background: var(--teal-banner); padding: 1.25rem 1rem 0; }
   .banner-inner { max-width: 1100px; margin: 0 auto; }
   .top-bar { display: flex; align-items: center; justify-content: space-between; padding-bottom: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.2); flex-wrap: wrap; gap: 0.75rem; }
   .app-title { font-size: 24px; font-weight: 400; color: #fff; letter-spacing: -0.3px; font-family: 'Playfair Display', Georgia, serif; font-style: italic; }
   .app-subtitle { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 2px; }
 
-  /* Save indicator */
   .save-indicator { font-size: 11px; color: rgba(255,255,255,0.6); display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
   .save-indicator.saving { color: #FFD97D; }
   .save-indicator.saved { color: #A8E6C8; }
@@ -50,7 +48,6 @@
   .nav-btn:hover:not(.active) { background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.2); }
   .nav-btn.active { background: #fff; color: var(--teal-banner); border-color: #fff; font-weight: 500; }
 
-  /* Loading overlay */
   .loading-overlay { position: fixed; inset: 0; background: var(--teal-bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; transition: opacity 0.4s; }
   .loading-overlay.hidden { opacity: 0; pointer-events: none; }
   .loading-title { font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-size: 28px; color: #fff; margin-bottom: 12px; }
@@ -67,7 +64,6 @@
   .add-btn { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border: 1px dashed var(--rust-mid); border-radius: 8px; background: transparent; color: var(--rust); font-size: 13px; cursor: pointer; transition: all 0.15s; font-family: inherit; white-space: nowrap; }
   .add-btn:hover { background: var(--rust-light); }
 
-  /* Overview */
   .overview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.5rem; }
   .stat-card { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 12px; padding: 1rem; text-align: center; transition: all 0.2s; }
   body.overview-active .stat-card { background: var(--teal-card); border-color: var(--teal-border); }
@@ -93,34 +89,25 @@
   .empty-hint { font-size: 13px; color: var(--ink-mid); text-align: center; padding: 2rem; font-style: italic; }
   body.overview-active .empty-hint { color: rgba(255,255,255,0.5); }
 
-  /* Project card collapse/expand */
-  .project-card-body { display: block; }
-  .project-card-body.collapsed { display: none; }
-  .project-collapse-btn { background: none; border: none; cursor: pointer; color: var(--ink-mid); padding: 4px; border-radius: 6px; transition: all 0.15s; font-size: 15px; min-width: 28px; min-height: 28px; display: flex; align-items: center; justify-content: center; }
-  .project-collapse-btn:hover { background: var(--sand-dark); color: var(--ink); }
-  .project-collapse-icon { transition: transform 0.2s; }
-  .project-collapse-icon.collapsed { transform: rotate(-90deg); }
-
-  /* Drag handles — shared style */
-  .drag-handle, .proj-drag-handle { cursor: grab; color: var(--ink-mid); font-size: 14px; flex-shrink: 0; opacity: 0.45; display: flex; align-items: center; padding: 2px; user-select: none; }
-  .drag-handle:hover, .proj-drag-handle:hover { opacity: 0.9; }
-
-  /* Project card sortable */
-  .project-card { transition: box-shadow 0.15s, opacity 0.15s; }
-  .project-card.sort-ghost { opacity: 0.35; }
-  .project-card.sort-highlight { box-shadow: 0 0 0 2px var(--blue); }
   .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.1rem; align-items: start; }
   .project-card { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 14px; padding: 1.1rem; border-top: 5px solid var(--rust); }
   .project-card.sage { border-top-color: var(--sage); }
   .project-card.gold { border-top-color: var(--gold); }
   .project-card.archived { opacity: 0.65; border-top-color: var(--ink-mid); }
-  .project-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.8rem; gap: 6px; }
+  .project-header { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
   .project-actions { display: flex; gap: 2px; flex-shrink: 0; }
   .icon-btn { background: none; border: none; cursor: pointer; color: var(--ink-mid); padding: 5px; border-radius: 6px; transition: all 0.15s; font-size: 15px; min-width: 28px; min-height: 28px; display: flex; align-items: center; justify-content: center; }
   .icon-btn:hover { background: var(--sand-dark); color: var(--ink); }
   .archive-badge { display: inline-block; font-size: 10px; padding: 2px 8px; background: var(--sand-dark); color: var(--ink-mid); border-radius: 10px; margin-top: 3px; }
 
-  /* Progress bar */
+  /* Collapse/expand */
+  .project-collapse-btn { background: none; border: none; cursor: pointer; color: var(--ink-mid); padding: 4px; border-radius: 6px; transition: all 0.15s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .project-collapse-btn:hover { background: var(--sand-dark); color: var(--ink); }
+  .collapse-icon { font-size: 16px; transition: transform 0.2s; display: block; }
+  .collapse-icon.is-collapsed { transform: rotate(-90deg); }
+  .project-card-body { margin-top: 0.8rem; }
+  .project-card-body.is-collapsed { display: none; }
+
   .progress-bar-wrap { margin-bottom: 0.8rem; }
   .progress-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-mid); margin-bottom: 4px; }
   .progress-bar { height: 6px; background: var(--sand-dark); border-radius: 3px; }
@@ -129,7 +116,6 @@
   .gold .progress-fill { background: var(--gold); }
   .archived .progress-fill { background: var(--ink-mid); }
 
-  /* Milestones */
   .milestones-wrap { margin-bottom: 0.7rem; }
   .milestones { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
   .milestone-row { display: flex; align-items: flex-start; gap: 6px; padding: 7px 8px; border-radius: 7px; background: var(--sand); transition: background 0.15s; }
@@ -160,14 +146,12 @@
   .milestone-row:hover .milestone-del { color: var(--ink-mid); }
   .milestone-del:hover { color: var(--rust) !important; }
 
-  /* Add milestone */
   .add-milestone-row { display: flex; align-items: center; gap: 6px; }
   .milestone-name-input { flex: 1; padding: 6px 8px; border: 1px dashed var(--sand-dark); border-radius: 6px; font-size: 12px; font-family: inherit; color: var(--ink); background: var(--cream); min-width: 0; }
   .milestone-name-input:focus { outline: 1px solid var(--rust-mid); border-style: solid; }
   .milestone-add-btn { padding: 5px 10px; font-size: 11px; border: 1px solid var(--rust-mid); border-radius: 6px; background: transparent; color: var(--rust); cursor: pointer; font-family: inherit; white-space: nowrap; transition: all 0.15s; }
   .milestone-add-btn:hover { background: var(--rust-light); }
 
-  /* Collapsible linked festivals */
   .linked-fests { margin-top: 8px; border-top: 1px solid var(--sand-dark); padding-top: 8px; }
   .linked-fests-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
   .linked-fests-label { font-size: 10px; color: var(--ink-mid); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
@@ -175,7 +159,6 @@
   .linked-fests-body.open { display: block; }
   .fest-pill { display: inline-flex; align-items: center; gap: 3px; background: var(--gold-light); color: var(--ink-mid); border-radius: 10px; padding: 2px 8px; font-size: 10px; margin: 2px; border: 1px solid #E8D8AA; }
 
-  /* Page log */
   .page-log-section { border-top: 1px solid var(--sand-dark); padding-top: 0.75rem; margin-top: 0.5rem; }
   .page-log-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
   .page-log-label { font-size: 11px; color: var(--ink-mid); display: flex; align-items: center; gap: 5px; }
@@ -212,13 +195,11 @@
   .inline-edit-sm { border: none; background: transparent; font-family: inherit; color: var(--ink-mid); font-size: 11px; width: 100%; }
   .inline-edit-sm:focus { outline: 1px solid var(--rust-mid); border-radius: 4px; background: var(--cream); }
 
-  /* Archive */
   .archive-section { margin-top: 1.75rem; }
   .archive-toggle-btn { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-mid); background: none; border: none; cursor: pointer; font-family: inherit; padding: 4px 0; }
   .archive-toggle-btn:hover { color: var(--ink); }
   .archive-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.1rem; align-items: start; margin-top: 1rem; }
 
-  /* ── Festival MOBILE CARDS layout ── */
   .festival-cards { display: flex; flex-direction: column; gap: 10px; }
   .festival-card { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 10px; padding: 1rem; }
   .festival-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px; }
@@ -237,7 +218,6 @@
   .toggle-track.on .toggle-thumb { left: 18px; }
   .tip-box { margin-top: 1rem; padding: 0.9rem 1rem; background: var(--gold-light); border-radius: 10px; border: 1px solid #E8D8AA; font-size: 12px; color: var(--ink-mid); line-height: 1.6; }
 
-  /* Responsive */
   @media (max-width: 600px) {
     .overview-grid { grid-template-columns: 1fr 1fr; }
     .overview-grid .stat-card:last-child { grid-column: 1 / -1; }
@@ -250,7 +230,6 @@
 </head>
 <body class="overview-active">
 
-<!-- Loading screen -->
 <div class="loading-overlay" id="loading-overlay">
   <div class="loading-title">The Writer's Room</div>
   <div class="loading-spinner"></div>
@@ -281,7 +260,6 @@
 <div class="page-body">
 <div class="app">
 
-  <!-- Overview -->
   <div id="tab-overview" class="section visible">
     <div class="section-header"><span class="section-label">At a glance</span></div>
     <div class="overview-grid">
@@ -295,7 +273,6 @@
     </div>
   </div>
 
-  <!-- Projects -->
   <div id="tab-projects" class="section">
     <div class="section-header">
       <span class="section-label">Projects</span>
@@ -319,7 +296,6 @@
     </div>
   </div>
 
-  <!-- Festivals -->
   <div id="tab-festivals" class="section">
     <div class="section-header">
       <span class="section-label">Festival tracker</span>
@@ -343,13 +319,10 @@
 </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<!-- ═══════════ FIREBASE CONFIG ═══════════ -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-// ▼▼▼ PASTE YOUR FIREBASE CONFIG HERE ▼▼▼
 const firebaseConfig = {
   apiKey: "AIzaSyAdFuTbDP6ucy7glB36AJXcT4p4Q6wR0Dg",
   authDomain: "maragh-media.firebaseapp.com",
@@ -359,7 +332,6 @@ const firebaseConfig = {
   messagingSenderId: "185883771966",
   appId: "1:185883771966:web:2538bb9eaf1a625469fd6f"
 };
-// ▲▲▲ END OF CONFIG ▲▲▲
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
@@ -371,17 +343,18 @@ const COLORS = ['rust','sage','gold'];
 let projects = [];
 let festivals = [];
 let nextProjId = 1, nextFestId = 1;
-let logOpen = {}, festOpen = {}, projCollapsed = {};
+let logOpen = {}, festOpen = {};
+// collapsed state: true = collapsed (default for all projects)
+let projCollapsed = {};
+let dragState = null;
 let archiveVisible = false;
 let dataLoaded = false;
 let isDirty = false;
 
-// ── Utility ──
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ── Save indicator (updates both page indicators + buttons) ──
 function setSaveState(state, msg) {
   ['projects','festivals'].forEach(page => {
     const el = document.getElementById(`save-indicator-${page}`);
@@ -397,14 +370,12 @@ function setSaveState(state, msg) {
   });
 }
 
-// ── Mark unsaved changes (replaces old auto-save) ──
 function markDirty() {
   if (!dataLoaded) return;
   isDirty = true;
   setSaveState('dirty', 'Unsaved changes');
 }
 
-// ── Manual save, triggered by Save button ──
 function saveNow() {
   if (!dataLoaded) return;
   setSaveState('saving', 'Saving…');
@@ -415,16 +386,10 @@ function saveNow() {
 }
 window.saveNow = saveNow;
 
-// Warn before leaving the page with unsaved changes
 window.addEventListener('beforeunload', (e) => {
-  if (isDirty) {
-    e.preventDefault();
-    e.returnValue = '';
-    return '';
-  }
+  if (isDirty) { e.preventDefault(); e.returnValue = ''; return ''; }
 });
 
-// ── Firebase load ──
 onValue(DATA_REF, (snapshot) => {
   const data = snapshot.val();
   if (data) {
@@ -439,7 +404,6 @@ onValue(DATA_REF, (snapshot) => {
     nextProjId = data.nextProjId || (projects.length + 1);
     nextFestId = data.nextFestId || (festivals.length + 1);
   } else {
-    // First time: seed with default projects
     projects = [
       { id:1, title:'An American Appetite', type:'Feature film', color:'rust', milestones:MILESTONES.map(m=>({name:m,state:0,startDate:'',endDate:''})), pageLog:[], notes:'', archived:false },
       { id:2, title:"I'll Meet You There", type:'Short film', color:'sage', milestones:MILESTONES.map(m=>({name:m,state:0,startDate:'',endDate:''})), pageLog:[], notes:'', archived:false },
@@ -448,6 +412,10 @@ onValue(DATA_REF, (snapshot) => {
     festivals = [];
     nextProjId = 4; nextFestId = 1;
   }
+  // Default all projects to collapsed on first load
+  projects.forEach(p => {
+    if (projCollapsed[p.id] === undefined) projCollapsed[p.id] = true;
+  });
   dataLoaded = true;
   document.getElementById('loading-overlay').classList.add('hidden');
   setSaveState('saved', 'All changes saved ✓');
@@ -456,7 +424,6 @@ onValue(DATA_REF, (snapshot) => {
   updateOverview();
 }, { onlyOnce: true });
 
-// ── Tab switching ──
 function showTab(tab) {
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('visible'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -469,15 +436,18 @@ function showTab(tab) {
 }
 window.showTab = showTab;
 
-// ── Progress ──
+function toggleProjectCollapse(projId) {
+  projCollapsed[projId] = !projCollapsed[projId];
+  renderProjects();
+}
+window.toggleProjectCollapse = toggleProjectCollapse;
+
 function getProgress(proj) {
   if(!proj.milestones||!proj.milestones.length) return 0;
   return Math.round((proj.milestones.filter(m=>m.state===2).length/proj.milestones.length)*100);
 }
 
-// ── Render project card ──
 function renderProjectCard(proj, isArchived) {
-  // Defensive defaults — handles older/incomplete records saved before these fields existed
   proj.milestones = proj.milestones || [];
   proj.pageLog = proj.pageLog || [];
   proj.notes = proj.notes || '';
@@ -485,6 +455,7 @@ function renderProjectCard(proj, isArchived) {
   proj.color = proj.color || 'rust';
 
   const pct = getProgress(proj);
+  const collapsed = !!projCollapsed[proj.id];
   const linked = festivals.filter(f=>String(f.projectId)===String(proj.id));
   const festPills = linked.map(f=>`<span class="fest-pill"><i class="ti ti-calendar-event" style="font-size:10px"></i>${esc(f.name||'Festival')}</span>`).join('');
   const totalPages = proj.pageLog.reduce((a,e)=>a+(Number(e.actual)||0),0);
@@ -501,188 +472,157 @@ function renderProjectCard(proj, isArchived) {
 
   el.innerHTML = `
     <div class="project-header">
-      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-        <div class="proj-drag-handle" title="Drag to reorder"><i class="ti ti-grip-vertical"></i></div>
-        <button class="project-collapse-btn" onclick="toggleProjectCollapse(${proj.id})" title="Collapse/expand">
-          <i class="ti ti-chevron-down project-collapse-icon ${projCollapsed[proj.id]?'collapsed':''}"></i>
-        </button>
-      </div>
-      <div style="flex:1;min-width:0;margin-left:4px">
+      <button class="project-collapse-btn" onclick="toggleProjectCollapse(${proj.id})" title="${collapsed?'Expand':'Collapse'}">
+        <i class="ti ti-chevron-down collapse-icon ${collapsed?'is-collapsed':''}"></i>
+      </button>
+      <div style="flex:1;min-width:0;margin-left:2px">
         <input class="inline-edit" value="${esc(proj.title)}" ${isArchived?'readonly':''} onchange="updateProject(${proj.id},'title',this.value)" />
-        <input class="inline-edit-sm" value="${esc(proj.type)}" ${isArchived?'readonly':''} onchange="updateProject(${proj.id},'type',this.value)" />
+        ${!collapsed ? `<input class="inline-edit-sm" value="${esc(proj.type)}" ${isArchived?'readonly':''} onchange="updateProject(${proj.id},'type',this.value)" />` : ''}
         ${isArchived?'<span class="archive-badge">Archived</span>':''}
       </div>
       <div class="project-actions">
-        ${archiveBtn}
-        ${!isArchived?`<button class="icon-btn" onclick="deleteProject(${proj.id})" title="Delete"><i class="ti ti-trash"></i></button>`:''}
+        ${!collapsed ? `${archiveBtn}${!isArchived?`<button class="icon-btn" onclick="deleteProject(${proj.id})" title="Delete"><i class="ti ti-trash"></i></button>`:''}` : ''}
       </div>
     </div>
-    <div class="project-card-body ${projCollapsed[proj.id]?'collapsed':''}">
-    <div class="progress-bar-wrap">
-      <div class="progress-bar-label"><span>Pipeline progress</span><span>${pct}%</span></div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-    </div>
-    <div class="milestones-wrap">
-      <div class="milestones" id="milestones-${proj.id}"></div>
-      ${!isArchived?`
-      <div class="add-milestone-row">
-        <input class="milestone-name-input" id="new-ms-${proj.id}" placeholder="Add a milestone…" type="text" onkeydown="if(event.key==='Enter') addMilestone(${proj.id})" />
-        <button class="milestone-add-btn" onclick="addMilestone(${proj.id})">+ Add</button>
-      </div>`:''}
-    </div>
-    <div class="page-log-section">
-      <div class="page-log-header" onclick="toggleLog(${proj.id})">
-        <span class="page-log-label">
-          <i class="ti ti-file-text" style="font-size:12px"></i> Page log
-          ${weekCount>0?`<span style="font-size:10px;background:var(--sand-dark);padding:1px 6px;border-radius:8px;color:var(--ink-mid)">${weekCount} wk${weekCount!==1?'s':''}</span>`:''}
-        </span>
-        <div style="display:flex;align-items:center;gap:8px">
-          ${totalPages>0?`<span class="page-log-summary">${totalPages} pages</span>`:''}
-          <i class="ti ti-chevron-down page-log-toggle-icon ${logIsOpen?'open':''}"></i>
+    <div class="project-card-body ${collapsed?'is-collapsed':''}">
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-label"><span>Pipeline progress</span><span>${pct}%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="milestones-wrap">
+        <div class="milestones" id="milestones-${proj.id}"></div>
+        ${!isArchived?`
+        <div class="add-milestone-row">
+          <input class="milestone-name-input" id="new-ms-${proj.id}" placeholder="Add a milestone…" type="text" onkeydown="if(event.key==='Enter') addMilestone(${proj.id})" />
+          <button class="milestone-add-btn" onclick="addMilestone(${proj.id})">+ Add</button>
+        </div>`:''}
+      </div>
+      <div class="page-log-section">
+        <div class="page-log-header" onclick="toggleLog(${proj.id})">
+          <span class="page-log-label">
+            <i class="ti ti-file-text" style="font-size:12px"></i> Page log
+            ${weekCount>0?`<span style="font-size:10px;background:var(--sand-dark);padding:1px 6px;border-radius:8px;color:var(--ink-mid)">${weekCount} wk${weekCount!==1?'s':''}</span>`:''}
+          </span>
+          <div style="display:flex;align-items:center;gap:8px">
+            ${totalPages>0?`<span class="page-log-summary">${totalPages} pages</span>`:''}
+            <i class="ti ti-chevron-down page-log-toggle-icon ${logIsOpen?'open':''}"></i>
+          </div>
+        </div>
+        <div class="page-log-body ${logIsOpen?'open':''}" id="log-body-${proj.id}">
+          <table class="page-log-table">
+            <thead><tr><th style="width:26px">Wk</th><th style="width:34px">Goal</th><th style="width:52px">Actual</th><th>Progress</th><th style="width:24px">Hit</th><th style="width:20px"></th></tr></thead>
+            <tbody id="log-tbody-${proj.id}"></tbody>
+          </table>
+          ${!isArchived?`
+          <div class="add-week-row">
+            <span class="week-input-label">Goal</span>
+            <input class="week-input" type="number" min="0" id="log-goal-${proj.id}" placeholder="10" />
+            <span class="week-input-label">Actual</span>
+            <input class="week-input" type="number" min="0" id="log-actual-${proj.id}" placeholder="—" />
+            <button class="log-add-btn" onclick="addLogEntry(${proj.id})">+ Add week</button>
+          </div>`:''}
+          ${weekCount>0?`<div class="page-log-total">${totalPages} pages across ${weekCount} week${weekCount!==1?'s':''}</div>`:''}
         </div>
       </div>
-      <div class="page-log-body ${logIsOpen?'open':''}" id="log-body-${proj.id}">
-        <table class="page-log-table">
-          <thead><tr><th style="width:26px">Wk</th><th style="width:34px">Goal</th><th style="width:52px">Actual</th><th>Progress</th><th style="width:24px">Hit</th><th style="width:20px"></th></tr></thead>
-          <tbody id="log-tbody-${proj.id}"></tbody>
-        </table>
-        ${!isArchived?`
-        <div class="add-week-row">
-          <span class="week-input-label">Goal</span>
-          <input class="week-input" type="number" min="0" id="log-goal-${proj.id}" placeholder="10" />
-          <span class="week-input-label">Actual</span>
-          <input class="week-input" type="number" min="0" id="log-actual-${proj.id}" placeholder="—" />
-          <button class="log-add-btn" onclick="addLogEntry(${proj.id})">+ Add week</button>
-        </div>`:''}
-        ${weekCount>0?`<div class="page-log-total">${totalPages} pages across ${weekCount} week${weekCount!==1?'s':''}</div>`:''}
-      </div>
-    </div>
-    ${linked.length?`
-    <div class="linked-fests">
-      <div class="linked-fests-header" onclick="toggleFests(${proj.id})">
-        <span class="linked-fests-label"><i class="ti ti-calendar-event" style="font-size:11px"></i> Festivals (${linked.length})</span>
-        <i class="ti ti-chevron-down" style="font-size:12px;color:var(--ink-mid);transition:transform 0.2s;${festIsOpen?'transform:rotate(180deg)':''}"></i>
-      </div>
-      <div class="linked-fests-body ${festIsOpen?'open':''}">${festPills}</div>
-    </div>`:''}
-    <textarea class="notes-area" placeholder="Notes, ideas, reminders…" ${isArchived?'readonly':''} onchange="updateProject(${proj.id},'notes',this.value)">${esc(proj.notes)}</textarea>
+      ${linked.length?`
+      <div class="linked-fests">
+        <div class="linked-fests-header" onclick="toggleFests(${proj.id})">
+          <span class="linked-fests-label"><i class="ti ti-calendar-event" style="font-size:11px"></i> Festivals (${linked.length})</span>
+          <i class="ti ti-chevron-down" style="font-size:12px;color:var(--ink-mid);transition:transform 0.2s;${festIsOpen?'transform:rotate(180deg)':''}"></i>
+        </div>
+        <div class="linked-fests-body ${festIsOpen?'open':''}">${festPills}</div>
+      </div>`:''}
+      <textarea class="notes-area" placeholder="Notes, ideas, reminders…" ${isArchived?'readonly':''} onchange="updateProject(${proj.id},'notes',this.value)">${esc(proj.notes)}</textarea>
     </div>
   `;
 
-  // Milestone rows
   const mCont = el.querySelector(`#milestones-${proj.id}`);
-  (proj.milestones||[]).forEach((m,i) => {
-    const checkClass = m.state===2?'done':m.state===1?'inprogress':'';
-    const row = document.createElement('div');
-    row.className = 'milestone-row';
-    if(!isArchived){ row.draggable=true; row.dataset.idx=i; }
-    row.innerHTML = `
-      ${!isArchived?'<i class="ti ti-grip-vertical drag-handle" aria-hidden="true"></i>':''}
-      <div class="milestone-check ${checkClass}" ${!isArchived?`onclick="cycleMilestone(${proj.id},${i})" role="button" tabindex="0" title="Cycle state"`:''}>
-        <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3 5.5L8 1" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <div class="milestone-content">
-        <div class="milestone-top">
-          <span class="milestone-name ${m.state===2?'done':''} ${m.state===1?'inprogress':''}">${esc(m.name)}</span>
-          ${m.state===1?'<span class="milestone-state-label state-inprogress">In progress</span>':''}
+  if (mCont) {
+    (proj.milestones||[]).forEach((m,i) => {
+      const checkClass = m.state===2?'done':m.state===1?'inprogress':'';
+      const row = document.createElement('div');
+      row.className = 'milestone-row';
+      if(!isArchived){ row.draggable=true; row.dataset.idx=i; }
+      row.innerHTML = `
+        ${!isArchived?'<i class="ti ti-grip-vertical drag-handle" aria-hidden="true"></i>':''}
+        <div class="milestone-check ${checkClass}" ${!isArchived?`onclick="cycleMilestone(${proj.id},${i})" role="button" tabindex="0" title="Cycle state"`:''}>
+          <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3 5.5L8 1" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-        <div class="ms-dates">
-          <div class="ms-date-group">
-            <span class="ms-date-label">Start</span>
-            <div class="date-input-wrap">
-              <input type="date" class="date-input" value="${m.startDate||''}" ${isArchived?'readonly':''} title="Start date" onchange="setMilestoneField(${proj.id},${i},'startDate',this.value)" />
+        <div class="milestone-content">
+          <div class="milestone-top">
+            <span class="milestone-name ${m.state===2?'done':''} ${m.state===1?'inprogress':''}">${esc(m.name)}</span>
+            ${m.state===1?'<span class="milestone-state-label state-inprogress">In progress</span>':''}
+          </div>
+          <div class="ms-dates">
+            <div class="ms-date-group">
+              <span class="ms-date-label">Start</span>
+              <div class="date-input-wrap">
+                <input type="date" class="date-input" value="${m.startDate||''}" ${isArchived?'readonly':''} title="Start date" onchange="setMilestoneField(${proj.id},${i},'startDate',this.value)" />
+              </div>
+            </div>
+            <div class="ms-date-group">
+              <span class="ms-date-label">End</span>
+              <div class="date-input-wrap">
+                <input type="date" class="date-input" value="${m.endDate||''}" ${isArchived?'readonly':''} title="End date" onchange="setMilestoneField(${proj.id},${i},'endDate',this.value)" />
+              </div>
             </div>
           </div>
-          <div class="ms-date-group">
-            <span class="ms-date-label">End</span>
-            <div class="date-input-wrap">
-              <input type="date" class="date-input" value="${m.endDate||''}" ${isArchived?'readonly':''} title="End date" onchange="setMilestoneField(${proj.id},${i},'endDate',this.value)" />
-            </div>
-          </div>
         </div>
-      </div>
-      ${!isArchived?`<button class="milestone-del icon-btn" onclick="deleteMilestone(${proj.id},${i})" title="Remove"><i class="ti ti-x" style="font-size:12px"></i></button>`:''}
-    `;
-
-    }
-    mCont.appendChild(row);
-  });
-
-  // Milestone sorting via SortableJS
-  if (!isArchived) {
-    Sortable.create(mCont, {
-      handle: '.drag-handle',
-      animation: 120,
-      ghostClass: 'dragging',
-      onEnd: evt => {
-        const p = projects.find(x => x.id === proj.id);
-        const moved = p.milestones.splice(evt.oldIndex, 1)[0];
-        p.milestones.splice(evt.newIndex, 0, moved);
-        renderProjects(); updateOverview(); markDirty();
+        ${!isArchived?`<button class="milestone-del icon-btn" onclick="deleteMilestone(${proj.id},${i})" title="Remove"><i class="ti ti-x" style="font-size:12px"></i></button>`:''}
+      `;
+      if(!isArchived) {
+        row.addEventListener('dragstart', e=>{ dragState={projId:proj.id,fromIdx:i}; row.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+        row.addEventListener('dragend', ()=>{ row.classList.remove('dragging'); mCont.querySelectorAll('.milestone-row').forEach(r=>r.classList.remove('drag-over')); });
+        row.addEventListener('dragover', e=>{ e.preventDefault(); mCont.querySelectorAll('.milestone-row').forEach(r=>r.classList.remove('drag-over')); row.classList.add('drag-over'); });
+        row.addEventListener('dragleave', ()=>row.classList.remove('drag-over'));
+        row.addEventListener('drop', e=>{
+          e.preventDefault(); row.classList.remove('drag-over');
+          if(!dragState||dragState.projId!==proj.id||dragState.fromIdx===i) return;
+          const p=projects.find(x=>x.id===proj.id);
+          const moved=p.milestones.splice(dragState.fromIdx,1)[0];
+          p.milestones.splice(i,0,moved);
+          dragState=null; renderProjects(); updateOverview(); markDirty();
+        });
       }
+      mCont.appendChild(row);
     });
   }
-  });
 
-  // Page log rows
   const logTbody = el.querySelector(`#log-tbody-${proj.id}`);
-  if(!proj.pageLog||proj.pageLog.length===0) {
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td colspan="6" style="font-size:11px;color:var(--ink-mid);font-style:italic;padding:6px 5px">No weeks logged yet${isArchived?'':' — add one below'}</td>`;
-    logTbody.appendChild(tr);
-  } else {
-    proj.pageLog.forEach((entry,i)=>{
-      const hasActual=entry.actual!==null&&entry.actual!==undefined&&entry.actual!=='';
-      const actual=hasActual?Number(entry.actual):null;
-      const barPct=(entry.goal>0&&actual!==null)?Math.min(100,Math.round((actual/entry.goal)*100)):0;
-      const isOver=actual!==null&&actual>entry.goal;
-      const hitHtml=actual===null?`<span class="hit-badge hit-pending">–</span>`:actual>=entry.goal?`<span class="hit-badge hit-yes">✓</span>`:`<span class="hit-badge hit-no">✗</span>`;
+  if (logTbody) {
+    if(!proj.pageLog||proj.pageLog.length===0) {
       const tr=document.createElement('tr');
-      tr.innerHTML=`
-        <td style="color:var(--ink-mid);font-size:11px">${i+1}</td>
-        <td style="font-size:12px">${entry.goal}</td>
-        <td>${isArchived?`<span style="font-size:12px">${actual!==null?actual:'—'}</span>`:`<input class="actual-input" type="number" min="0" value="${actual!==null?actual:''}" placeholder="—" onchange="updateLogActual(${proj.id},${i},this.value)" />`}</td>
-        <td><div class="log-bar-wrap"><div class="log-bar-fill ${isOver?'over':''}" style="width:${barPct}%"></div></div></td>
-        <td>${hitHtml}</td>
-        <td>${isArchived?'':`<button class="icon-btn" style="font-size:11px;padding:2px" onclick="deleteLogEntry(${proj.id},${i})" title="Remove"><i class="ti ti-x"></i></button>`}</td>
-      `;
+      tr.innerHTML=`<td colspan="6" style="font-size:11px;color:var(--ink-mid);font-style:italic;padding:6px 5px">No weeks logged yet${isArchived?'':' — add one below'}</td>`;
       logTbody.appendChild(tr);
-    });
+    } else {
+      proj.pageLog.forEach((entry,i)=>{
+        const hasActual=entry.actual!==null&&entry.actual!==undefined&&entry.actual!=='';
+        const actual=hasActual?Number(entry.actual):null;
+        const barPct=(entry.goal>0&&actual!==null)?Math.min(100,Math.round((actual/entry.goal)*100)):0;
+        const isOver=actual!==null&&actual>entry.goal;
+        const hitHtml=actual===null?`<span class="hit-badge hit-pending">–</span>`:actual>=entry.goal?`<span class="hit-badge hit-yes">✓</span>`:`<span class="hit-badge hit-no">✗</span>`;
+        const tr=document.createElement('tr');
+        tr.innerHTML=`
+          <td style="color:var(--ink-mid);font-size:11px">${i+1}</td>
+          <td style="font-size:12px">${entry.goal}</td>
+          <td>${isArchived?`<span style="font-size:12px">${actual!==null?actual:'—'}</span>`:`<input class="actual-input" type="number" min="0" value="${actual!==null?actual:''}" placeholder="—" onchange="updateLogActual(${proj.id},${i},this.value)" />`}</td>
+          <td><div class="log-bar-wrap"><div class="log-bar-fill ${isOver?'over':''}" style="width:${barPct}%"></div></div></td>
+          <td>${hitHtml}</td>
+          <td>${isArchived?'':`<button class="icon-btn" style="font-size:11px;padding:2px" onclick="deleteLogEntry(${proj.id},${i})" title="Remove"><i class="ti ti-x"></i></button>`}</td>
+        `;
+        logTbody.appendChild(tr);
+      });
+    }
   }
   return el;
 }
 
-function toggleProjectCollapse(projId) {
-  projCollapsed[projId] = !projCollapsed[projId];
-  renderProjects();
-}
-window.toggleProjectCollapse = toggleProjectCollapse;
-
 function renderProjects() {
-  const active = projects.filter(p=>!p.archived);
-  const archived = projects.filter(p=>p.archived);
-  const c = document.getElementById('projects-container');
-  c.innerHTML = '';
-  active.forEach(proj => c.appendChild(renderProjectCard(proj, false)));
-
-  // Project card sorting via SortableJS
-  if (window._projSortable) window._projSortable.destroy();
-  window._projSortable = Sortable.create(c, {
-    handle: '.proj-drag-handle',
-    animation: 150,
-    ghostClass: 'sort-ghost',
-    chosenClass: 'sort-highlight',
-    onEnd: evt => {
-      const activeProjects = projects.filter(p=>!p.archived);
-      const archivedProjects = projects.filter(p=>p.archived);
-      const moved = activeProjects.splice(evt.oldIndex, 1)[0];
-      activeProjects.splice(evt.newIndex, 0, moved);
-      projects.length = 0;
-      activeProjects.forEach(p => projects.push(p));
-      archivedProjects.forEach(p => projects.push(p));
-      updateOverview(); markDirty();
-    }
-  });
+  const active=projects.filter(p=>!p.archived);
+  const archived=projects.filter(p=>p.archived);
+  const c=document.getElementById('projects-container');
+  c.innerHTML='';
+  active.forEach(p=>c.appendChild(renderProjectCard(p,false)));
   const archSec=document.getElementById('archive-section');
   if(archived.length>0){
     archSec.style.display='';
@@ -747,7 +687,6 @@ function renderFestivals() {
   updateOverview();
 }
 
-// ── Milestone actions ──
 function cycleMilestone(projId,idx){
   const proj=projects.find(p=>p.id==projId);
   proj.milestones[idx].state=(proj.milestones[idx].state+1)%3;
@@ -780,7 +719,6 @@ function deleteMilestone(projId,idx){
 }
 window.deleteMilestone=deleteMilestone;
 
-// ── Project actions ──
 function updateProject(id,field,val){
   const proj=projects.find(p=>p.id==id);
   if(proj){ proj[field]=val; markDirty(); }
@@ -809,7 +747,9 @@ window.deleteProject=deleteProject;
 
 function addProject(){
   const col=COLORS[projects.filter(p=>!p.archived).length%COLORS.length];
-  projects.push({id:nextProjId++,title:'New project',type:'Feature film',color:col,milestones:MILESTONES.map(m=>({name:m,state:0,startDate:'',endDate:''})),pageLog:[],notes:'',archived:false});
+  const newProj={id:nextProjId++,title:'New project',type:'Feature film',color:col,milestones:MILESTONES.map(m=>({name:m,state:0,startDate:'',endDate:''})),pageLog:[],notes:'',archived:false};
+  projects.push(newProj);
+  projCollapsed[newProj.id] = false; // new projects start expanded
   renderProjects(); updateOverview(); showTab('projects'); markDirty();
 }
 window.addProject=addProject;
@@ -828,7 +768,6 @@ window.toggleLog=toggleLog;
 function toggleFests(projId){ festOpen[projId]=!festOpen[projId]; renderProjects(); }
 window.toggleFests=toggleFests;
 
-// ── Page log ──
 function addLogEntry(projId){
   const goalEl=document.getElementById(`log-goal-${projId}`);
   const actualEl=document.getElementById(`log-actual-${projId}`);
@@ -860,7 +799,6 @@ function deleteLogEntry(projId,idx){
 }
 window.deleteLogEntry=deleteLogEntry;
 
-// ── Festival actions ──
 function updateFestival(id,field,val){
   const f=festivals.find(x=>x.id==id);
   if(f){ f[field]=val; renderFestivals(); renderProjects(); markDirty(); }
@@ -885,7 +823,6 @@ function addFestival(){
 }
 window.addFestival=addFestival;
 
-// ── Overview ──
 function deadlineUrgency(d){
   if(!d) return null;
   const diff=(new Date(d)-new Date())/(1000*60*60*24);
@@ -927,7 +864,7 @@ function updateOverview(){
 window.updateOverview=updateOverview;
 
 </script>
-</div><!-- .app -->
-</div><!-- .page-body -->
+</div>
+</div>
 </body>
 </html>
