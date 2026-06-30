@@ -101,15 +101,14 @@
   .project-collapse-icon { transition: transform 0.2s; }
   .project-collapse-icon.collapsed { transform: rotate(-90deg); }
 
-  /* Project card drag-to-reorder */
-  .project-card { cursor: default; transition: box-shadow 0.15s, opacity 0.15s; }
-  .project-card.proj-dragging { opacity: 0.4; box-shadow: none; }
-  .project-card.proj-drag-over { box-shadow: 0 0 0 2px var(--blue), 0 4px 16px rgba(59,125,216,0.15); }
-  .proj-drag-handle { cursor: grab; color: var(--ink-mid); font-size: 16px; opacity: 0.4; flex-shrink: 0; display: flex; align-items: center; padding: 2px; }
-  .proj-drag-handle:hover { opacity: 0.8; }
-  .proj-drag-handle:active { cursor: grabbing; }
-  /* Prevent inputs, buttons, textareas from accidentally triggering card drag */
-  .project-card input, .project-card button, .project-card textarea, .project-card select { -webkit-user-drag: none; }
+  /* Drag handles — shared style */
+  .drag-handle, .proj-drag-handle { cursor: grab; color: var(--ink-mid); font-size: 14px; flex-shrink: 0; opacity: 0.45; display: flex; align-items: center; padding: 2px; user-select: none; }
+  .drag-handle:hover, .proj-drag-handle:hover { opacity: 0.9; }
+
+  /* Project card sortable */
+  .project-card { transition: box-shadow 0.15s, opacity 0.15s; }
+  .project-card.sort-ghost { opacity: 0.35; }
+  .project-card.sort-highlight { box-shadow: 0 0 0 2px var(--blue); }
   .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.1rem; align-items: start; }
   .project-card { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 14px; padding: 1.1rem; border-top: 5px solid var(--rust); }
   .project-card.sage { border-top-color: var(--sage); }
@@ -344,7 +343,8 @@
 </div>
 </div>
 
-<!-- ═══════════ FIREBASE CONFIG — REPLACE THIS SECTION ═══════════ -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<!-- ═══════════ FIREBASE CONFIG ═══════════ -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -372,8 +372,6 @@ let projects = [];
 let festivals = [];
 let nextProjId = 1, nextFestId = 1;
 let logOpen = {}, festOpen = {}, projCollapsed = {};
-let dragState = null;
-let projDragState = null;
 let archiveVisible = false;
 let dataLoaded = false;
 let isDirty = false;
@@ -606,21 +604,24 @@ function renderProjectCard(proj, isArchived) {
       ${!isArchived?`<button class="milestone-del icon-btn" onclick="deleteMilestone(${proj.id},${i})" title="Remove"><i class="ti ti-x" style="font-size:12px"></i></button>`:''}
     `;
 
-    if(!isArchived) {
-      row.addEventListener('dragstart', e=>{ dragState={projId:proj.id,fromIdx:i}; row.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
-      row.addEventListener('dragend', ()=>{ row.classList.remove('dragging'); mCont.querySelectorAll('.milestone-row').forEach(r=>r.classList.remove('drag-over')); });
-      row.addEventListener('dragover', e=>{ e.preventDefault(); mCont.querySelectorAll('.milestone-row').forEach(r=>r.classList.remove('drag-over')); row.classList.add('drag-over'); });
-      row.addEventListener('dragleave', ()=>row.classList.remove('drag-over'));
-      row.addEventListener('drop', e=>{
-        e.preventDefault(); row.classList.remove('drag-over');
-        if(!dragState||dragState.projId!==proj.id||dragState.fromIdx===i) return;
-        const p=projects.find(x=>x.id===proj.id);
-        const moved=p.milestones.splice(dragState.fromIdx,1)[0];
-        p.milestones.splice(i,0,moved);
-        dragState=null; renderProjects(); updateOverview(); markDirty();
-      });
     }
     mCont.appendChild(row);
+  });
+
+  // Milestone sorting via SortableJS
+  if (!isArchived) {
+    Sortable.create(mCont, {
+      handle: '.drag-handle',
+      animation: 120,
+      ghostClass: 'dragging',
+      onEnd: evt => {
+        const p = projects.find(x => x.id === proj.id);
+        const moved = p.milestones.splice(evt.oldIndex, 1)[0];
+        p.milestones.splice(evt.newIndex, 0, moved);
+        renderProjects(); updateOverview(); markDirty();
+      }
+    });
+  }
   });
 
   // Page log rows
@@ -662,42 +663,25 @@ function renderProjects() {
   const archived = projects.filter(p=>p.archived);
   const c = document.getElementById('projects-container');
   c.innerHTML = '';
+  active.forEach(proj => c.appendChild(renderProjectCard(proj, false)));
 
-  active.forEach(proj => {
-    const el = renderProjectCard(proj, false);
-    el.draggable = true;
-
-    el.addEventListener('dragstart', e => {
-      projDragState = proj.id;
-      setTimeout(() => el.classList.add('proj-dragging'), 0);
-      e.dataTransfer.effectAllowed = 'move';
-    });
-    el.addEventListener('dragend', () => {
-      el.classList.remove('proj-dragging');
-      projDragState = null;
-      document.querySelectorAll('.project-card').forEach(c => c.classList.remove('proj-drag-over'));
-    });
-    el.addEventListener('dragover', e => {
-      if (projDragState == null || projDragState === proj.id) return;
-      e.preventDefault();
-      document.querySelectorAll('.project-card').forEach(c => c.classList.remove('proj-drag-over'));
-      el.classList.add('proj-drag-over');
-    });
-    el.addEventListener('dragleave', () => el.classList.remove('proj-drag-over'));
-    el.addEventListener('drop', e => {
-      e.preventDefault();
-      el.classList.remove('proj-drag-over');
-      if (projDragState == null || projDragState === proj.id) return;
-      const fromIdx = projects.findIndex(p => p.id === projDragState);
-      const toIdx = projects.findIndex(p => p.id === proj.id);
-      if (fromIdx === -1 || toIdx === -1) return;
-      const moved = projects.splice(fromIdx, 1)[0];
-      projects.splice(toIdx, 0, moved);
-      projDragState = null;
-      renderProjects(); updateOverview(); markDirty();
-    });
-
-    c.appendChild(el);
+  // Project card sorting via SortableJS
+  if (window._projSortable) window._projSortable.destroy();
+  window._projSortable = Sortable.create(c, {
+    handle: '.proj-drag-handle',
+    animation: 150,
+    ghostClass: 'sort-ghost',
+    chosenClass: 'sort-highlight',
+    onEnd: evt => {
+      const activeProjects = projects.filter(p=>!p.archived);
+      const archivedProjects = projects.filter(p=>p.archived);
+      const moved = activeProjects.splice(evt.oldIndex, 1)[0];
+      activeProjects.splice(evt.newIndex, 0, moved);
+      projects.length = 0;
+      activeProjects.forEach(p => projects.push(p));
+      archivedProjects.forEach(p => projects.push(p));
+      updateOverview(); markDirty();
+    }
   });
   const archSec=document.getElementById('archive-section');
   if(archived.length>0){
