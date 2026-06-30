@@ -17,60 +17,70 @@
     --cream: #FDFAF4; --page-bg: #F7F2EA;
     --blue: #3B7DD8; --blue-light: #E6EFFC;
     --green: #2E7D52; --green-light: #E0F2EB;
-    --teal-bg: #4C6B77;
-    --teal-banner: #4C6B77;
-    --teal-card: rgba(255,255,255,0.13);
-    --teal-border: rgba(255,255,255,0.2);
+    --teal-bg: #4C6B77; --teal-banner: #4C6B77;
+    --teal-card: rgba(255,255,255,0.13); --teal-border: rgba(255,255,255,0.2);
   }
+
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--page-bg); color: var(--ink); min-height: 100vh; }
-
-  /* Teal banner always visible at top */
-  .banner { background: var(--teal-banner); padding: 1.5rem 1rem 0; }
-  .banner-inner { max-width: 1100px; margin: 0 auto; }
-
-  /* Teal full-page background only on overview */
   body.overview-active { background: var(--teal-bg); }
   body.overview-active .banner { background: transparent; }
 
-  .page-body { padding: 1.75rem 1rem 4rem; }
-  .app { max-width: 1100px; margin: 0 auto; }
-  .top-bar { display: flex; align-items: center; justify-content: space-between; padding-bottom: 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.2); margin-bottom: 0; }
-  .app-title { font-size: 26px; font-weight: 400; color: #fff; letter-spacing: -0.3px; font-family: 'Playfair Display', Georgia, serif; font-style: italic; }
-  .app-subtitle { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 3px; }
+  /* Banner */
+  .banner { background: var(--teal-banner); padding: 1.25rem 1rem 0; }
+  .banner-inner { max-width: 1100px; margin: 0 auto; }
+  .top-bar { display: flex; align-items: center; justify-content: space-between; padding-bottom: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.2); flex-wrap: wrap; gap: 0.75rem; }
+  .app-title { font-size: 24px; font-weight: 400; color: #fff; letter-spacing: -0.3px; font-family: 'Playfair Display', Georgia, serif; font-style: italic; }
+  .app-subtitle { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 2px; }
 
-  .nav { display: flex; gap: 4px; }
-  .nav-btn { padding: 7px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; border: 1px solid transparent; background: transparent; color: rgba(255,255,255,0.75); transition: all 0.15s; font-family: inherit; }
+  /* Save indicator */
+  .save-indicator { font-size: 11px; color: rgba(255,255,255,0.6); display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
+  .save-indicator.saving { color: #FFD97D; }
+  .save-indicator.saved { color: #A8E6C8; }
+  .save-indicator.error { color: #FFB3A7; }
+  .save-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  .nav { display: flex; gap: 4px; flex-wrap: wrap; }
+  .nav-btn { padding: 6px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; border: 1px solid transparent; background: transparent; color: rgba(255,255,255,0.75); transition: all 0.15s; font-family: inherit; }
   .nav-btn:hover:not(.active) { background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.2); }
   .nav-btn.active { background: #fff; color: var(--teal-banner); border-color: #fff; font-weight: 500; }
 
+  /* Loading overlay */
+  .loading-overlay { position: fixed; inset: 0; background: var(--teal-bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; transition: opacity 0.4s; }
+  .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+  .loading-title { font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-size: 28px; color: #fff; margin-bottom: 12px; }
+  .loading-spinner { width: 28px; height: 28px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .page-body { padding: 1.5rem 1rem 4rem; }
+  .app { max-width: 1100px; margin: 0 auto; }
   .section { display: none; }
   .section.visible { display: block; }
-  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px; }
   .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--ink-mid); font-weight: 600; }
   body.overview-active .section-label { color: rgba(255,255,255,0.6); }
-  .add-btn { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border: 1px dashed var(--rust-mid); border-radius: 8px; background: transparent; color: var(--rust); font-size: 13px; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+  .add-btn { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border: 1px dashed var(--rust-mid); border-radius: 8px; background: transparent; color: var(--rust); font-size: 13px; cursor: pointer; transition: all 0.15s; font-family: inherit; white-space: nowrap; }
   .add-btn:hover { background: var(--rust-light); }
 
-  /* Overview teal cards */
-  .overview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 1.75rem; }
-  .stat-card { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 12px; padding: 1.1rem; text-align: center; transition: all 0.2s; }
+  /* Overview */
+  .overview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.5rem; }
+  .stat-card { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 12px; padding: 1rem; text-align: center; transition: all 0.2s; }
   body.overview-active .stat-card { background: var(--teal-card); border-color: var(--teal-border); }
-  .stat-num { font-size: 28px; font-weight: 600; color: var(--rust); }
+  .stat-num { font-size: 26px; font-weight: 600; color: var(--rust); }
   body.overview-active .stat-num { color: #fff; }
-  .stat-num-sm { font-size: 20px; font-weight: 600; color: var(--gold); }
+  .stat-num-sm { font-size: 18px; font-weight: 600; }
   body.overview-active .stat-num-sm { color: #FFD97D; }
-  .stat-label { font-size: 12px; color: var(--ink-mid); margin-top: 3px; }
+  .stat-label { font-size: 11px; color: var(--ink-mid); margin-top: 3px; }
   body.overview-active .stat-label { color: rgba(255,255,255,0.65); }
-  .due-soon-list { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 14px; padding: 1rem 1.25rem; transition: all 0.2s; }
+  .due-soon-list { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 14px; padding: 1rem; transition: all 0.2s; }
   body.overview-active .due-soon-list { background: var(--teal-card); border-color: var(--teal-border); }
-  .due-soon-item { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--sand); }
+  .due-soon-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--sand); gap: 8px; }
   body.overview-active .due-soon-item { border-bottom-color: rgba(255,255,255,0.12); }
   .due-soon-item:last-child { border-bottom: none; }
   .due-item-name { font-size: 13px; color: var(--ink); font-weight: 500; }
   body.overview-active .due-item-name { color: #fff; }
-  .due-item-project { font-size: 12px; color: var(--ink-mid); margin-top: 2px; }
+  .due-item-project { font-size: 11px; color: var(--ink-mid); margin-top: 2px; }
   body.overview-active .due-item-project { color: rgba(255,255,255,0.6); }
-  .deadline-badge { display: inline-block; padding: 3px 9px; border-radius: 10px; font-size: 11px; font-weight: 500; }
+  .deadline-badge { display: inline-block; padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
   .deadline-urgent { background: #FDE8E4; color: #9B3A1A; }
   .deadline-soon { background: var(--gold-light); color: #7A5C1A; }
   .deadline-ok { background: var(--green-light); color: var(--green); }
@@ -78,20 +88,20 @@
   body.overview-active .empty-hint { color: rgba(255,255,255,0.5); }
 
   /* Projects grid */
-  .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; align-items: start; }
-  .project-card { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 14px; padding: 1.25rem; border-top: 5px solid var(--rust); }
+  .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.1rem; align-items: start; }
+  .project-card { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 14px; padding: 1.1rem; border-top: 5px solid var(--rust); }
   .project-card.sage { border-top-color: var(--sage); }
   .project-card.gold { border-top-color: var(--gold); }
   .project-card.archived { opacity: 0.65; border-top-color: var(--ink-mid); }
-  .project-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.9rem; }
-  .project-actions { display: flex; gap: 4px; flex-shrink: 0; }
-  .icon-btn { background: none; border: none; cursor: pointer; color: var(--ink-mid); padding: 4px; border-radius: 6px; transition: all 0.15s; font-size: 15px; }
+  .project-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.8rem; gap: 6px; }
+  .project-actions { display: flex; gap: 2px; flex-shrink: 0; }
+  .icon-btn { background: none; border: none; cursor: pointer; color: var(--ink-mid); padding: 5px; border-radius: 6px; transition: all 0.15s; font-size: 15px; min-width: 28px; min-height: 28px; display: flex; align-items: center; justify-content: center; }
   .icon-btn:hover { background: var(--sand-dark); color: var(--ink); }
   .archive-badge { display: inline-block; font-size: 10px; padding: 2px 8px; background: var(--sand-dark); color: var(--ink-mid); border-radius: 10px; margin-top: 3px; }
 
   /* Progress bar */
-  .progress-bar-wrap { margin-bottom: 0.9rem; }
-  .progress-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-mid); margin-bottom: 5px; }
+  .progress-bar-wrap { margin-bottom: 0.8rem; }
+  .progress-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-mid); margin-bottom: 4px; }
   .progress-bar { height: 6px; background: var(--sand-dark); border-radius: 3px; }
   .progress-fill { height: 100%; border-radius: 3px; background: var(--rust); transition: width 0.3s; }
   .sage .progress-fill { background: var(--sage); }
@@ -99,49 +109,44 @@
   .archived .progress-fill { background: var(--ink-mid); }
 
   /* Milestones */
-  .milestones-wrap { margin-bottom: 0.75rem; }
+  .milestones-wrap { margin-bottom: 0.7rem; }
   .milestones { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
-  .milestone-row { display: flex; align-items: flex-start; gap: 7px; padding: 7px 8px; border-radius: 7px; background: var(--sand); transition: background 0.15s; cursor: default; }
+  .milestone-row { display: flex; align-items: flex-start; gap: 6px; padding: 7px 8px; border-radius: 7px; background: var(--sand); transition: background 0.15s; }
   .milestone-row.dragging { opacity: 0.4; }
   .milestone-row.drag-over { background: var(--blue-light); outline: 1.5px dashed var(--blue); }
   .milestone-row:hover { background: var(--sand-dark); }
-  .drag-handle { cursor: grab; color: var(--ink-mid); font-size: 13px; flex-shrink: 0; opacity: 0.5; margin-top: 2px; }
-  .drag-handle:active { cursor: grabbing; }
-  .milestone-check { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--sand-dark); background: transparent; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.18s; margin-top: 1px; }
+  .drag-handle { cursor: grab; color: var(--ink-mid); font-size: 13px; flex-shrink: 0; opacity: 0.5; margin-top: 2px; touch-action: none; }
+  .milestone-check { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--sand-dark); background: transparent; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.18s; margin-top: 1px; }
   .milestone-check.inprogress { background: var(--blue); border-color: var(--blue); }
   .milestone-check.done { background: var(--green); border-color: var(--green); }
   .milestone-check svg { display: none; }
   .milestone-check.done svg { display: block; }
-
-  /* Milestone content: name + dates stacked */
   .milestone-content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
-  .milestone-top { display: flex; align-items: center; gap: 6px; }
+  .milestone-top { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   .milestone-name { font-size: 12px; color: var(--ink); flex: 1; min-width: 0; }
   .milestone-name.done { text-decoration: line-through; color: var(--ink-mid); }
   .milestone-name.inprogress { color: var(--blue); font-style: italic; }
   .milestone-state-label { font-size: 10px; padding: 1px 6px; border-radius: 8px; flex-shrink: 0; }
   .state-inprogress { background: var(--blue-light); color: var(--blue); }
-
-  /* Dates row below name */
-  .ms-dates { display: flex; align-items: center; gap: 10px; }
+  .ms-dates { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .ms-date-group { display: flex; align-items: center; gap: 4px; }
   .ms-date-label { font-size: 10px; color: var(--ink-mid); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
-  .date-input { font-size: 11px; color: var(--ink-mid); border: 1px solid var(--sand-dark); background: var(--cream); cursor: pointer; font-family: inherit; padding: 2px 4px; border-radius: 5px; width: 88px; }
+  .date-input-wrap { position: relative; display: inline-block; width: 86px; }
+  .date-input { font-size: 11px; color: var(--ink-mid); border: 1px solid var(--sand-dark); background: var(--cream); cursor: pointer; font-family: inherit; padding: 2px 4px; border-radius: 5px; width: 86px; }
   .date-input:focus { outline: 1px solid var(--rust-mid); }
   .date-input::-webkit-calendar-picker-indicator { opacity: 0; width: 100%; position: absolute; left: 0; cursor: pointer; }
-  .date-input-wrap { position: relative; display: inline-block; width: 88px; }
-  .milestone-del { background: none; border: none; cursor: pointer; color: transparent; padding: 2px; border-radius: 4px; font-size: 12px; transition: all 0.15s; flex-shrink: 0; margin-top: 1px; }
+  .milestone-del { background: none; border: none; cursor: pointer; color: transparent; padding: 3px; border-radius: 4px; font-size: 12px; transition: all 0.15s; flex-shrink: 0; margin-top: 1px; min-width: 22px; min-height: 22px; display: flex; align-items: center; justify-content: center; }
   .milestone-row:hover .milestone-del { color: var(--ink-mid); }
-  .milestone-del:hover { background: var(--sand-dark); color: var(--rust) !important; }
+  .milestone-del:hover { color: var(--rust) !important; }
 
   /* Add milestone */
   .add-milestone-row { display: flex; align-items: center; gap: 6px; }
-  .milestone-name-input { flex: 1; padding: 5px 8px; border: 1px dashed var(--sand-dark); border-radius: 6px; font-size: 12px; font-family: inherit; color: var(--ink); background: var(--cream); }
+  .milestone-name-input { flex: 1; padding: 6px 8px; border: 1px dashed var(--sand-dark); border-radius: 6px; font-size: 12px; font-family: inherit; color: var(--ink); background: var(--cream); min-width: 0; }
   .milestone-name-input:focus { outline: 1px solid var(--rust-mid); border-style: solid; }
-  .milestone-add-btn { padding: 4px 10px; font-size: 11px; border: 1px solid var(--rust-mid); border-radius: 6px; background: transparent; color: var(--rust); cursor: pointer; font-family: inherit; white-space: nowrap; transition: all 0.15s; }
+  .milestone-add-btn { padding: 5px 10px; font-size: 11px; border: 1px solid var(--rust-mid); border-radius: 6px; background: transparent; color: var(--rust); cursor: pointer; font-family: inherit; white-space: nowrap; transition: all 0.15s; }
   .milestone-add-btn:hover { background: var(--rust-light); }
 
-  /* Collapsible linked festivals on project card */
+  /* Collapsible linked festivals */
   .linked-fests { margin-top: 8px; border-top: 1px solid var(--sand-dark); padding-top: 8px; }
   .linked-fests-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
   .linked-fests-label { font-size: 10px; color: var(--ink-mid); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
@@ -150,17 +155,17 @@
   .fest-pill { display: inline-flex; align-items: center; gap: 3px; background: var(--gold-light); color: var(--ink-mid); border-radius: 10px; padding: 2px 8px; font-size: 10px; margin: 2px; border: 1px solid #E8D8AA; }
 
   /* Page log */
-  .page-log-section { border-top: 1px solid var(--sand-dark); padding-top: 0.8rem; margin-top: 0.5rem; }
+  .page-log-section { border-top: 1px solid var(--sand-dark); padding-top: 0.75rem; margin-top: 0.5rem; }
   .page-log-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
   .page-log-label { font-size: 11px; color: var(--ink-mid); display: flex; align-items: center; gap: 5px; }
   .page-log-toggle-icon { font-size: 13px; color: var(--ink-mid); transition: transform 0.2s; }
   .page-log-toggle-icon.open { transform: rotate(180deg); }
   .page-log-summary { font-size: 11px; color: var(--ink-mid); }
-  .page-log-body { margin-top: 0.6rem; display: none; }
+  .page-log-body { margin-top: 0.5rem; display: none; }
   .page-log-body.open { display: block; }
-  .page-log-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 0.6rem; table-layout: fixed; }
+  .page-log-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 0.5rem; table-layout: fixed; }
   .page-log-table th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--ink-mid); padding: 4px 5px; border-bottom: 1px solid var(--sand-dark); }
-  .page-log-table td { padding: 5px 5px; border-bottom: 1px solid var(--sand); vertical-align: middle; }
+  .page-log-table td { padding: 5px; border-bottom: 1px solid var(--sand); vertical-align: middle; }
   .page-log-table tr:last-child td { border-bottom: none; }
   .hit-badge { display: inline-block; width: 18px; height: 18px; border-radius: 50%; text-align: center; line-height: 18px; font-size: 10px; font-weight: 600; }
   .hit-yes { background: var(--green-light); color: var(--green); }
@@ -171,56 +176,65 @@
   .log-bar-fill.over { background: var(--rust); }
   .actual-input { width: 44px; padding: 3px 5px; border: 1px solid var(--sand-dark); border-radius: 5px; font-size: 12px; text-align: center; background: var(--cream); color: var(--ink); font-family: inherit; }
   .actual-input:focus { outline: 1px solid var(--rust-mid); }
-  .actual-input::placeholder { color: var(--ink-mid); font-style: italic; }
-  .add-week-row { display: flex; align-items: center; gap: 6px; padding: 6px 0 2px; border-top: 1px dashed var(--sand-dark); margin-top: 4px; }
-  .week-input { width: 50px; padding: 4px 6px; border: 1px solid var(--sand-dark); border-radius: 6px; font-size: 12px; text-align: center; background: var(--cream); color: var(--ink); font-family: inherit; }
+  .add-week-row { display: flex; align-items: center; gap: 5px; padding: 6px 0 2px; border-top: 1px dashed var(--sand-dark); margin-top: 4px; flex-wrap: wrap; }
+  .week-input { width: 48px; padding: 4px 5px; border: 1px solid var(--sand-dark); border-radius: 6px; font-size: 12px; text-align: center; background: var(--cream); color: var(--ink); font-family: inherit; }
   .week-input:focus { outline: 1px solid var(--rust-mid); }
   .week-input-label { font-size: 11px; color: var(--ink-mid); white-space: nowrap; }
-  .log-add-btn { padding: 4px 10px; font-size: 11px; border: 1px solid var(--rust-mid); border-radius: 6px; background: transparent; color: var(--rust); cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap; }
+  .log-add-btn { padding: 4px 9px; font-size: 11px; border: 1px solid var(--rust-mid); border-radius: 6px; background: transparent; color: var(--rust); cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap; }
   .log-add-btn:hover { background: var(--rust-light); }
   .page-log-total { font-size: 11px; color: var(--ink-mid); padding-top: 4px; }
 
   .notes-area { width: 100%; border: 1px solid var(--sand-dark); border-radius: 7px; padding: 7px; font-size: 12px; font-family: inherit; color: var(--ink); background: var(--cream); resize: vertical; min-height: 52px; margin-top: 8px; }
   .notes-area:focus { outline: 1px solid var(--rust-mid); }
-  .inline-edit { border: none; background: transparent; font-family: inherit; color: var(--ink); font-size: 15px; font-weight: 600; width: 100%; }
+  .inline-edit { border: none; background: transparent; font-family: inherit; color: var(--ink); font-size: 14px; font-weight: 600; width: 100%; }
   .inline-edit:focus { outline: 1px solid var(--rust-mid); border-radius: 4px; background: var(--cream); padding: 1px 4px; }
   .inline-edit-sm { border: none; background: transparent; font-family: inherit; color: var(--ink-mid); font-size: 11px; width: 100%; }
   .inline-edit-sm:focus { outline: 1px solid var(--rust-mid); border-radius: 4px; background: var(--cream); }
 
-  /* Archive section */
-  .archive-section { margin-top: 2rem; }
+  /* Archive */
+  .archive-section { margin-top: 1.75rem; }
   .archive-toggle-btn { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-mid); background: none; border: none; cursor: pointer; font-family: inherit; padding: 4px 0; }
   .archive-toggle-btn:hover { color: var(--ink); }
-  .archive-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; align-items: start; margin-top: 1rem; }
+  .archive-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.1rem; align-items: start; margin-top: 1rem; }
 
-  /* Festival table */
-  .festival-wrap { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 14px; overflow: hidden; }
-  .festival-table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
-  .festival-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--ink-mid); font-weight: 600; padding: 10px 12px; border-bottom: 1px solid var(--sand-dark); background: var(--sand); }
-  .festival-table td { padding: 10px 12px; border-bottom: 1px solid var(--sand); vertical-align: middle; }
-  .festival-table tr:last-child td { border-bottom: none; }
-  .festival-table tr:hover td { background: var(--sand); }
-  .fest-name-input, .fest-cell-input { font-size: 13px; color: var(--ink); border: none; background: transparent; width: 100%; font-family: inherit; }
-  .fest-name-input:focus, .fest-cell-input:focus { outline: 1px solid var(--rust-mid); border-radius: 4px; padding: 2px 5px; }
-  .project-link-select { font-size: 12px; border: 1px solid var(--sand-dark); border-radius: 6px; padding: 4px 6px; background: var(--cream); color: var(--ink); font-family: inherit; width: 100%; }
-  .project-link-select:focus { outline: 1px solid var(--rust-mid); }
-  .submitted-toggle { display: flex; align-items: center; justify-content: center; }
-  .toggle-track { width: 36px; height: 20px; border-radius: 10px; background: var(--sand-dark); border: 1px solid var(--sand-dark); cursor: pointer; position: relative; transition: background 0.2s, border-color 0.2s; flex-shrink: 0; }
+  /* ── Festival MOBILE CARDS layout ── */
+  .festival-cards { display: flex; flex-direction: column; gap: 10px; }
+  .festival-card { background: var(--cream); border: 1px solid var(--sand-dark); border-radius: 10px; padding: 1rem; }
+  .festival-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px; }
+  .festival-card-name { font-size: 14px; font-weight: 600; color: var(--ink); border: none; background: transparent; font-family: inherit; flex: 1; min-width: 0; }
+  .festival-card-name:focus { outline: 1px solid var(--rust-mid); border-radius: 4px; background: var(--cream); padding: 1px 4px; }
+  .festival-card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .festival-field { display: flex; flex-direction: column; gap: 3px; }
+  .festival-field-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.7px; color: var(--ink-mid); font-weight: 600; }
+  .festival-field-input { font-size: 13px; color: var(--ink); border: 1px solid var(--sand-dark); border-radius: 6px; padding: 5px 7px; font-family: inherit; background: var(--cream); width: 100%; }
+  .festival-field-input:focus { outline: 1px solid var(--rust-mid); }
+  .festival-card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 8px; border-top: 1px solid var(--sand-dark); }
+  .submitted-toggle { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink-mid); }
+  .toggle-track { width: 36px; height: 20px; border-radius: 10px; background: var(--sand-dark); border: 1px solid var(--sand-dark); cursor: pointer; position: relative; transition: background 0.2s; flex-shrink: 0; }
   .toggle-track.on { background: var(--green); border-color: var(--green); }
   .toggle-thumb { width: 14px; height: 14px; border-radius: 50%; background: #fff; position: absolute; top: 2px; left: 2px; transition: left 0.2s; }
   .toggle-track.on .toggle-thumb { left: 18px; }
-  .tip-box { margin-top: 1rem; padding: 1rem 1.1rem; background: var(--gold-light); border-radius: 10px; border: 1px solid #E8D8AA; font-size: 12px; color: var(--ink-mid); line-height: 1.6; }
+  .tip-box { margin-top: 1rem; padding: 0.9rem 1rem; background: var(--gold-light); border-radius: 10px; border: 1px solid #E8D8AA; font-size: 12px; color: var(--ink-mid); line-height: 1.6; }
 
-  @media (max-width: 700px) {
-    .projects-grid, .archive-grid { grid-template-columns: 1fr; }
-    .top-bar { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+  /* Responsive */
+  @media (max-width: 600px) {
     .overview-grid { grid-template-columns: 1fr 1fr; }
-    .festival-table th:nth-child(3), .festival-table td:nth-child(3) { display: none; }
-    .ms-dates { flex-direction: column; align-items: flex-end; }
+    .overview-grid .stat-card:last-child { grid-column: 1 / -1; }
+    .projects-grid, .archive-grid { grid-template-columns: 1fr; }
+    .ms-dates { flex-direction: column; align-items: flex-start; gap: 5px; }
+    .top-bar { gap: 0.5rem; }
+    .app-title { font-size: 20px; }
   }
 </style>
 </head>
 <body class="overview-active">
+
+<!-- Loading screen -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-title">The Writer's Room</div>
+  <div class="loading-spinner"></div>
+</div>
+
 <div class="banner">
   <div class="banner-inner">
     <div class="top-bar">
@@ -228,14 +242,21 @@
         <div class="app-title">The Writer's Room</div>
         <div class="app-subtitle">Maragh Media Project Tracker</div>
       </div>
-      <nav class="nav">
-        <button class="nav-btn active" onclick="showTab('overview')">Overview</button>
-        <button class="nav-btn" onclick="showTab('projects')">Projects</button>
-        <button class="nav-btn" onclick="showTab('festivals')">Festivals</button>
-      </nav>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div class="save-indicator" id="save-indicator">
+          <div class="save-dot"></div>
+          <span id="save-text">Loading…</span>
+        </div>
+        <nav class="nav">
+          <button class="nav-btn active" onclick="showTab('overview')">Overview</button>
+          <button class="nav-btn" onclick="showTab('projects')">Projects</button>
+          <button class="nav-btn" onclick="showTab('festivals')">Festivals</button>
+        </nav>
+      </div>
     </div>
   </div>
 </div>
+
 <div class="page-body">
 <div class="app">
 
@@ -243,13 +264,13 @@
   <div id="tab-overview" class="section visible">
     <div class="section-header"><span class="section-label">At a glance</span></div>
     <div class="overview-grid">
-      <div class="stat-card"><div class="stat-num" id="stat-projects">3</div><div class="stat-label">Active projects</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-milestones" style="color:inherit">0</div><div class="stat-label">Milestones done</div></div>
-      <div class="stat-card"><div class="stat-num stat-num-sm" id="stat-festivals">0 out of 0</div><div class="stat-label">Festivals Submitted</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-projects">—</div><div class="stat-label">Active projects</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-milestones">—</div><div class="stat-label">Milestones done</div></div>
+      <div class="stat-card"><div class="stat-num stat-num-sm" id="stat-festivals" style="color:var(--gold)">— of —</div><div class="stat-label">Festivals Submitted</div></div>
     </div>
-    <div class="section-header" style="margin-top:0.25rem"><span class="section-label">Upcoming deadlines</span></div>
+    <div class="section-header"><span class="section-label">Upcoming deadlines</span></div>
     <div class="due-soon-list" id="due-soon-list">
-      <div class="empty-hint">Add festival deadlines or milestone dates to see them here</div>
+      <div class="empty-hint">Loading…</div>
     </div>
   </div>
 
@@ -260,8 +281,6 @@
       <button class="add-btn" onclick="addProject()"><i class="ti ti-plus"></i> Add project</button>
     </div>
     <div id="projects-container" class="projects-grid"></div>
-
-    <!-- Archived projects -->
     <div class="archive-section" id="archive-section" style="display:none">
       <button class="archive-toggle-btn" onclick="toggleArchiveView()">
         <i class="ti ti-archive" style="font-size:14px"></i>
@@ -278,49 +297,103 @@
       <span class="section-label">Festival tracker</span>
       <button class="add-btn" onclick="addFestival()"><i class="ti ti-plus"></i> Add festival</button>
     </div>
-    <div class="festival-wrap">
-      <table class="festival-table">
-        <thead>
-          <tr>
-            <th style="width:26%">Festival</th>
-            <th style="width:13%">Deadline</th>
-            <th style="width:9%">Fee</th>
-            <th style="width:20%">Linked project</th>
-            <th style="width:12%">Requirements</th>
-            <th style="width:9%;text-align:center">Submitted</th>
-            <th style="width:32px"></th>
-          </tr>
-        </thead>
-        <tbody id="festival-body"></tbody>
-      </table>
-      <div id="festival-empty" class="empty-hint">No festivals yet — add one above</div>
-    </div>
+    <div id="festival-cards" class="festival-cards"></div>
+    <div id="festival-empty" class="empty-hint" style="display:none">No festivals yet — add one above</div>
     <div class="tip-box">
       <i class="ti ti-info-circle" style="font-size:14px;vertical-align:-2px;margin-right:4px"></i>
       <strong>Tip:</strong> Link each festival to a project and set a deadline — both will appear in the Overview so you never miss a submission window.
     </div>
   </div>
+
+</div>
 </div>
 
-<script>
+<!-- ═══════════ FIREBASE CONFIG — REPLACE THIS SECTION ═══════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// ▼▼▼ PASTE YOUR FIREBASE CONFIG HERE ▼▼▼
+const firebaseConfig = {
+  apiKey: "REPLACE_WITH_YOUR_API_KEY",
+  authDomain: "REPLACE_WITH_YOUR_AUTH_DOMAIN",
+  databaseURL: "REPLACE_WITH_YOUR_DATABASE_URL",
+  projectId: "REPLACE_WITH_YOUR_PROJECT_ID",
+  storageBucket: "REPLACE_WITH_YOUR_STORAGE_BUCKET",
+  messagingSenderId: "REPLACE_WITH_YOUR_MESSAGING_SENDER_ID",
+  appId: "REPLACE_WITH_YOUR_APP_ID"
+};
+// ▲▲▲ END OF CONFIG ▲▲▲
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const DATA_REF = ref(db, 'trackerData');
+
 const MILESTONES = ['Logline','Synopsis','Outline','First draft','Revisions','Final draft','Submission'];
 const COLORS = ['rust','sage','gold'];
 
-let projects = [
-  { id:1, title:'An American Appetite', type:'Feature film', color:'rust', milestones:MILESTONES.map(m=>({name:m,state:0,startDate:'',endDate:''})), pageLog:[], notes:'', archived:false },
-  { id:2, title:"I'll Meet You There", type:'Short film', color:'sage', milestones:MILESTONES.map(m=>({name:m,state:0,startDate:'',endDate:''})), pageLog:[], notes:'', archived:false },
-  { id:3, title:'Crybaby', type:'Short film', color:'gold', milestones:MILESTONES.map(m=>({name:m,state:0,startDate:'',endDate:''})), pageLog:[], notes:'', archived:false },
-];
+let projects = [];
 let festivals = [];
-let nextProjId = 4, nextFestId = 1;
+let nextProjId = 1, nextFestId = 1;
 let logOpen = {}, festOpen = {};
 let dragState = null;
 let archiveVisible = false;
+let saveTimer = null;
+let dataLoaded = false;
 
+// ── Utility ──
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// ── Save indicator ──
+function setSaveState(state, msg) {
+  const el = document.getElementById('save-indicator');
+  const txt = document.getElementById('save-text');
+  el.className = 'save-indicator ' + state;
+  txt.textContent = msg;
+}
+
+// ── Firebase save (debounced 1.5s) ──
+function scheduleSave() {
+  if (!dataLoaded) return;
+  setSaveState('saving', 'Saving…');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const payload = { projects, festivals, nextProjId, nextFestId };
+    set(DATA_REF, payload)
+      .then(() => setSaveState('saved', 'All changes saved ✓'))
+      .catch(() => setSaveState('error', 'Save failed — check connection'));
+  }, 1500);
+}
+
+// ── Firebase load ──
+onValue(DATA_REF, (snapshot) => {
+  const data = snapshot.val();
+  if (data) {
+    projects = data.projects || [];
+    festivals = data.festivals || [];
+    nextProjId = data.nextProjId || (projects.length + 1);
+    nextFestId = data.nextFestId || (festivals.length + 1);
+  } else {
+    // First time: seed with default projects
+    projects = [
+      { id:1, title:'An American Appetite', type:'Feature film', color:'rust', milestones:MILESTONES.map(m=>({name:m,state:0,startDate:'',endDate:''})), pageLog:[], notes:'', archived:false },
+      { id:2, title:"I'll Meet You There", type:'Short film', color:'sage', milestones:MILESTONES.map(m=>({name:m,state:0,startDate:'',endDate:''})), pageLog:[], notes:'', archived:false },
+      { id:3, title:'Crybaby', type:'Short film', color:'gold', milestones:MILESTONES.map(m=>({name:m,state:0,startDate:'',endDate:''})), pageLog:[], notes:'', archived:false },
+    ];
+    festivals = [];
+    nextProjId = 4; nextFestId = 1;
+  }
+  dataLoaded = true;
+  document.getElementById('loading-overlay').classList.add('hidden');
+  setSaveState('saved', 'All changes saved ✓');
+  renderProjects();
+  renderFestivals();
+  updateOverview();
+}, { onlyOnce: true });
+
+// ── Tab switching ──
 function showTab(tab) {
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('visible'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -328,24 +401,23 @@ function showTab(tab) {
   document.querySelectorAll('.nav-btn').forEach(b=>{
     if(b.textContent.trim().toLowerCase().startsWith(tab.slice(0,4))) b.classList.add('active');
   });
-  if(tab==='overview') {
-    document.body.classList.add('overview-active');
-    updateOverview();
-  } else {
-    document.body.classList.remove('overview-active');
-  }
+  if(tab==='overview') { document.body.classList.add('overview-active'); updateOverview(); }
+  else document.body.classList.remove('overview-active');
 }
+window.showTab = showTab;
 
+// ── Progress ──
 function getProgress(proj) {
-  if(!proj.milestones.length) return 0;
+  if(!proj.milestones||!proj.milestones.length) return 0;
   return Math.round((proj.milestones.filter(m=>m.state===2).length/proj.milestones.length)*100);
 }
 
+// ── Render project card ──
 function renderProjectCard(proj, isArchived) {
   const pct = getProgress(proj);
   const linked = festivals.filter(f=>String(f.projectId)===String(proj.id));
   const festPills = linked.map(f=>`<span class="fest-pill"><i class="ti ti-calendar-event" style="font-size:10px"></i>${esc(f.name||'Festival')}</span>`).join('');
-  const totalPages = proj.pageLog.reduce((a,e)=>a+(e.actual||0),0);
+  const totalPages = proj.pageLog.reduce((a,e)=>a+(Number(e.actual)||0),0);
   const weekCount = proj.pageLog.length;
   const logIsOpen = !!logOpen[proj.id];
   const festIsOpen = !!festOpen[proj.id];
@@ -362,11 +434,11 @@ function renderProjectCard(proj, isArchived) {
       <div style="flex:1;min-width:0">
         <input class="inline-edit" value="${esc(proj.title)}" ${isArchived?'readonly':''} onchange="updateProject(${proj.id},'title',this.value)" />
         <input class="inline-edit-sm" value="${esc(proj.type)}" ${isArchived?'readonly':''} onchange="updateProject(${proj.id},'type',this.value)" />
-        ${isArchived ? '<span class="archive-badge">Archived</span>' : ''}
+        ${isArchived?'<span class="archive-badge">Archived</span>':''}
       </div>
       <div class="project-actions">
         ${archiveBtn}
-        ${!isArchived ? `<button class="icon-btn" onclick="deleteProject(${proj.id})" title="Delete project"><i class="ti ti-trash"></i></button>` : ''}
+        ${!isArchived?`<button class="icon-btn" onclick="deleteProject(${proj.id})" title="Delete"><i class="ti ti-trash"></i></button>`:''}
       </div>
     </div>
     <div class="progress-bar-wrap">
@@ -375,70 +447,66 @@ function renderProjectCard(proj, isArchived) {
     </div>
     <div class="milestones-wrap">
       <div class="milestones" id="milestones-${proj.id}"></div>
-      ${!isArchived ? `
+      ${!isArchived?`
       <div class="add-milestone-row">
         <input class="milestone-name-input" id="new-ms-${proj.id}" placeholder="Add a milestone…" type="text" onkeydown="if(event.key==='Enter') addMilestone(${proj.id})" />
         <button class="milestone-add-btn" onclick="addMilestone(${proj.id})">+ Add</button>
-      </div>` : ''}
+      </div>`:''}
     </div>
     <div class="page-log-section">
       <div class="page-log-header" onclick="toggleLog(${proj.id})">
         <span class="page-log-label">
           <i class="ti ti-file-text" style="font-size:12px"></i> Page log
-          ${weekCount > 0 ? `<span style="font-size:10px;background:var(--sand-dark);padding:1px 6px;border-radius:8px;color:var(--ink-mid)">${weekCount} wk${weekCount!==1?'s':''}</span>` : ''}
+          ${weekCount>0?`<span style="font-size:10px;background:var(--sand-dark);padding:1px 6px;border-radius:8px;color:var(--ink-mid)">${weekCount} wk${weekCount!==1?'s':''}</span>`:''}
         </span>
         <div style="display:flex;align-items:center;gap:8px">
-          ${totalPages > 0 ? `<span class="page-log-summary">${totalPages} pages total</span>` : ''}
-          <i class="ti ti-chevron-down page-log-toggle-icon ${logIsOpen?'open':''}" id="log-icon-${proj.id}"></i>
+          ${totalPages>0?`<span class="page-log-summary">${totalPages} pages</span>`:''}
+          <i class="ti ti-chevron-down page-log-toggle-icon ${logIsOpen?'open':''}"></i>
         </div>
       </div>
       <div class="page-log-body ${logIsOpen?'open':''}" id="log-body-${proj.id}">
         <table class="page-log-table">
-          <thead><tr><th style="width:28px">Wk</th><th style="width:36px">Goal</th><th style="width:54px">Actual</th><th>Progress</th><th style="width:24px">Hit</th><th style="width:20px"></th></tr></thead>
+          <thead><tr><th style="width:26px">Wk</th><th style="width:34px">Goal</th><th style="width:52px">Actual</th><th>Progress</th><th style="width:24px">Hit</th><th style="width:20px"></th></tr></thead>
           <tbody id="log-tbody-${proj.id}"></tbody>
         </table>
-        ${!isArchived ? `
+        ${!isArchived?`
         <div class="add-week-row">
           <span class="week-input-label">Goal</span>
           <input class="week-input" type="number" min="0" id="log-goal-${proj.id}" placeholder="10" />
           <span class="week-input-label">Actual</span>
           <input class="week-input" type="number" min="0" id="log-actual-${proj.id}" placeholder="—" />
           <button class="log-add-btn" onclick="addLogEntry(${proj.id})">+ Add week</button>
-        </div>` : ''}
-        ${weekCount > 0 ? `<div class="page-log-total">${totalPages} pages written across ${weekCount} week${weekCount!==1?'s':''}</div>` : ''}
+        </div>`:''}
+        ${weekCount>0?`<div class="page-log-total">${totalPages} pages across ${weekCount} week${weekCount!==1?'s':''}</div>`:''}
       </div>
     </div>
-    ${linked.length ? `
+    ${linked.length?`
     <div class="linked-fests">
       <div class="linked-fests-header" onclick="toggleFests(${proj.id})">
-        <span class="linked-fests-label">
-          <i class="ti ti-calendar-event" style="font-size:11px"></i>
-          Festivals (${linked.length})
-        </span>
+        <span class="linked-fests-label"><i class="ti ti-calendar-event" style="font-size:11px"></i> Festivals (${linked.length})</span>
         <i class="ti ti-chevron-down" style="font-size:12px;color:var(--ink-mid);transition:transform 0.2s;${festIsOpen?'transform:rotate(180deg)':''}"></i>
       </div>
       <div class="linked-fests-body ${festIsOpen?'open':''}">${festPills}</div>
-    </div>` : ''}
+    </div>`:''}
     <textarea class="notes-area" placeholder="Notes, ideas, reminders…" ${isArchived?'readonly':''} onchange="updateProject(${proj.id},'notes',this.value)">${esc(proj.notes)}</textarea>
   `;
 
   // Milestone rows
   const mCont = el.querySelector(`#milestones-${proj.id}`);
-  proj.milestones.forEach((m, i) => {
-    const checkClass = m.state===2 ? 'done' : m.state===1 ? 'inprogress' : '';
-    const stateLabel = m.state===1 ? '<span class="milestone-state-label state-inprogress">In progress</span>' : '';
+  (proj.milestones||[]).forEach((m,i) => {
+    const checkClass = m.state===2?'done':m.state===1?'inprogress':'';
     const row = document.createElement('div');
     row.className = 'milestone-row';
-    if(!isArchived) { row.draggable = true; row.dataset.idx = i; }
+    if(!isArchived){ row.draggable=true; row.dataset.idx=i; }
     row.innerHTML = `
-      ${!isArchived ? '<i class="ti ti-grip-vertical drag-handle" aria-hidden="true"></i>' : ''}
-      <div class="milestone-check ${checkClass}" ${!isArchived?`onclick="cycleMilestone(${proj.id},${i})" title="Click to cycle: not started → in progress → done" role="button" tabindex="0"`:''}>
+      ${!isArchived?'<i class="ti ti-grip-vertical drag-handle" aria-hidden="true"></i>':''}
+      <div class="milestone-check ${checkClass}" ${!isArchived?`onclick="cycleMilestone(${proj.id},${i})" role="button" tabindex="0" title="Cycle state"`:''}>
         <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3 5.5L8 1" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <div class="milestone-content">
         <div class="milestone-top">
           <span class="milestone-name ${m.state===2?'done':''} ${m.state===1?'inprogress':''}">${esc(m.name)}</span>
-          ${stateLabel}
+          ${m.state===1?'<span class="milestone-state-label state-inprogress">In progress</span>':''}
         </div>
         <div class="ms-dates">
           <div class="ms-date-group">
@@ -455,22 +523,21 @@ function renderProjectCard(proj, isArchived) {
           </div>
         </div>
       </div>
-      ${!isArchived ? `<button class="milestone-del icon-btn" onclick="deleteMilestone(${proj.id},${i})" title="Remove milestone"><i class="ti ti-x" style="font-size:12px"></i></button>` : ''}
+      ${!isArchived?`<button class="milestone-del icon-btn" onclick="deleteMilestone(${proj.id},${i})" title="Remove"><i class="ti ti-x" style="font-size:12px"></i></button>`:''}
     `;
 
     if(!isArchived) {
-      row.addEventListener('dragstart', e => { dragState={projId:proj.id,fromIdx:i}; row.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
-      row.addEventListener('dragend', () => { row.classList.remove('dragging'); mCont.querySelectorAll('.milestone-row').forEach(r=>r.classList.remove('drag-over')); });
-      row.addEventListener('dragover', e => { e.preventDefault(); mCont.querySelectorAll('.milestone-row').forEach(r=>r.classList.remove('drag-over')); row.classList.add('drag-over'); });
-      row.addEventListener('dragleave', () => row.classList.remove('drag-over'));
-      row.addEventListener('drop', e => {
+      row.addEventListener('dragstart', e=>{ dragState={projId:proj.id,fromIdx:i}; row.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+      row.addEventListener('dragend', ()=>{ row.classList.remove('dragging'); mCont.querySelectorAll('.milestone-row').forEach(r=>r.classList.remove('drag-over')); });
+      row.addEventListener('dragover', e=>{ e.preventDefault(); mCont.querySelectorAll('.milestone-row').forEach(r=>r.classList.remove('drag-over')); row.classList.add('drag-over'); });
+      row.addEventListener('dragleave', ()=>row.classList.remove('drag-over'));
+      row.addEventListener('drop', e=>{
         e.preventDefault(); row.classList.remove('drag-over');
-        if(!dragState||dragState.projId!==proj.id) return;
-        if(dragState.fromIdx===i) return;
+        if(!dragState||dragState.projId!==proj.id||dragState.fromIdx===i) return;
         const p=projects.find(x=>x.id===proj.id);
         const moved=p.milestones.splice(dragState.fromIdx,1)[0];
         p.milestones.splice(i,0,moved);
-        dragState=null; renderProjects(); updateOverview();
+        dragState=null; renderProjects(); updateOverview(); scheduleSave();
       });
     }
     mCont.appendChild(row);
@@ -478,17 +545,17 @@ function renderProjectCard(proj, isArchived) {
 
   // Page log rows
   const logTbody = el.querySelector(`#log-tbody-${proj.id}`);
-  if(proj.pageLog.length===0) {
+  if(!proj.pageLog||proj.pageLog.length===0) {
     const tr=document.createElement('tr');
     tr.innerHTML=`<td colspan="6" style="font-size:11px;color:var(--ink-mid);font-style:italic;padding:6px 5px">No weeks logged yet${isArchived?'':' — add one below'}</td>`;
     logTbody.appendChild(tr);
   } else {
-    proj.pageLog.forEach((entry,i) => {
-      const hasActual = entry.actual!==null&&entry.actual!==undefined&&entry.actual!=='';
-      const actual = hasActual?Number(entry.actual):null;
-      const barPct = (entry.goal>0&&actual!==null)?Math.min(100,Math.round((actual/entry.goal)*100)):0;
-      const isOver = actual!==null&&actual>entry.goal;
-      const hitHtml = actual===null?`<span class="hit-badge hit-pending">–</span>`:actual>=entry.goal?`<span class="hit-badge hit-yes">✓</span>`:`<span class="hit-badge hit-no">✗</span>`;
+    proj.pageLog.forEach((entry,i)=>{
+      const hasActual=entry.actual!==null&&entry.actual!==undefined&&entry.actual!=='';
+      const actual=hasActual?Number(entry.actual):null;
+      const barPct=(entry.goal>0&&actual!==null)?Math.min(100,Math.round((actual/entry.goal)*100)):0;
+      const isOver=actual!==null&&actual>entry.goal;
+      const hitHtml=actual===null?`<span class="hit-badge hit-pending">–</span>`:actual>=entry.goal?`<span class="hit-badge hit-yes">✓</span>`:`<span class="hit-badge hit-no">✗</span>`;
       const tr=document.createElement('tr');
       tr.innerHTML=`
         <td style="color:var(--ink-mid);font-size:11px">${i+1}</td>
@@ -496,28 +563,26 @@ function renderProjectCard(proj, isArchived) {
         <td>${isArchived?`<span style="font-size:12px">${actual!==null?actual:'—'}</span>`:`<input class="actual-input" type="number" min="0" value="${actual!==null?actual:''}" placeholder="—" onchange="updateLogActual(${proj.id},${i},this.value)" />`}</td>
         <td><div class="log-bar-wrap"><div class="log-bar-fill ${isOver?'over':''}" style="width:${barPct}%"></div></div></td>
         <td>${hitHtml}</td>
-        <td>${isArchived?'':'<button class="icon-btn" style="font-size:11px;padding:2px" onclick="deleteLogEntry('+proj.id+','+i+')" title="Remove week"><i class="ti ti-x"></i></button>'}</td>
+        <td>${isArchived?'':`<button class="icon-btn" style="font-size:11px;padding:2px" onclick="deleteLogEntry(${proj.id},${i})" title="Remove"><i class="ti ti-x"></i></button>`}</td>
       `;
       logTbody.appendChild(tr);
     });
   }
-
   return el;
 }
 
 function renderProjects() {
-  const active = projects.filter(p=>!p.archived);
-  const archived = projects.filter(p=>p.archived);
-  const c = document.getElementById('projects-container');
+  const active=projects.filter(p=>!p.archived);
+  const archived=projects.filter(p=>p.archived);
+  const c=document.getElementById('projects-container');
   c.innerHTML='';
-  active.forEach(proj=>c.appendChild(renderProjectCard(proj,false)));
-
-  const archSec = document.getElementById('archive-section');
-  if(archived.length>0) {
+  active.forEach(p=>c.appendChild(renderProjectCard(p,false)));
+  const archSec=document.getElementById('archive-section');
+  if(archived.length>0){
     archSec.style.display='';
-    const archCont = document.getElementById('archive-container');
+    const archCont=document.getElementById('archive-container');
     archCont.innerHTML='';
-    archived.forEach(proj=>archCont.appendChild(renderProjectCard(proj,true)));
+    archived.forEach(p=>archCont.appendChild(renderProjectCard(p,true)));
   } else {
     archSec.style.display='none';
     archiveVisible=false;
@@ -527,189 +592,225 @@ function renderProjects() {
   }
 }
 
-function toggleArchiveView() {
-  archiveVisible=!archiveVisible;
-  document.getElementById('archive-container').style.display=archiveVisible?'':'none';
-  document.getElementById('archive-chevron').style.transform=archiveVisible?'rotate(180deg)':'';
-  document.getElementById('archive-toggle-label').textContent=archiveVisible?'Hide archived projects':'Show archived projects';
-}
-
-function toggleFests(projId) {
-  festOpen[projId]=!festOpen[projId];
-  renderProjects();
-}
-
-function cycleMilestone(projId,idx) {
-  const proj=projects.find(p=>p.id==projId);
-  proj.milestones[idx].state=(proj.milestones[idx].state+1)%3;
-  renderProjects(); updateOverview();
-}
-
-function setMilestoneField(projId,idx,field,val) {
-  const proj=projects.find(p=>p.id==projId);
-  proj.milestones[idx][field]=val;
+function renderFestivals() {
+  const container=document.getElementById('festival-cards');
+  const empty=document.getElementById('festival-empty');
+  container.innerHTML='';
+  if(!festivals.length){ empty.style.display=''; return; }
+  empty.style.display='none';
+  festivals.forEach(f=>{
+    const projOpts=projects.map(p=>`<option value="${p.id}" ${String(f.projectId)===String(p.id)?'selected':''}>${esc(p.title)}</option>`).join('');
+    const card=document.createElement('div');
+    card.className='festival-card';
+    card.innerHTML=`
+      <div class="festival-card-header">
+        <input class="festival-card-name" value="${esc(f.name)}" placeholder="Festival name" onchange="updateFestival(${f.id},'name',this.value)" />
+        <button class="icon-btn" onclick="deleteFestival(${f.id})" title="Remove festival"><i class="ti ti-x" style="font-size:14px"></i></button>
+      </div>
+      <div class="festival-card-grid">
+        <div class="festival-field">
+          <span class="festival-field-label">Deadline</span>
+          <input type="date" class="festival-field-input" value="${f.deadline||''}" onchange="updateFestival(${f.id},'deadline',this.value)" />
+        </div>
+        <div class="festival-field">
+          <span class="festival-field-label">Entry fee</span>
+          <input class="festival-field-input" value="${esc(f.cost)}" placeholder="$0" onchange="updateFestival(${f.id},'cost',this.value)" />
+        </div>
+        <div class="festival-field">
+          <span class="festival-field-label">Linked project</span>
+          <select class="festival-field-input" onchange="updateFestival(${f.id},'projectId',this.value)">
+            <option value="">— none —</option>${projOpts}
+          </select>
+        </div>
+        <div class="festival-field">
+          <span class="festival-field-label">Requirements</span>
+          <input class="festival-field-input" value="${esc(f.requirements)}" placeholder="e.g. 15 min max" onchange="updateFestival(${f.id},'requirements',this.value)" />
+        </div>
+      </div>
+      <div class="festival-card-footer">
+        <div class="submitted-toggle">
+          <div class="toggle-track ${f.submitted?'on':''}" onclick="toggleSubmitted(${f.id})" title="Toggle submitted">
+            <div class="toggle-thumb"></div>
+          </div>
+          <span>${f.submitted?'Submitted':'Not submitted'}</span>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
   updateOverview();
 }
 
-function addMilestone(projId) {
+// ── Milestone actions ──
+function cycleMilestone(projId,idx){
+  const proj=projects.find(p=>p.id==projId);
+  proj.milestones[idx].state=(proj.milestones[idx].state+1)%3;
+  renderProjects(); updateOverview(); scheduleSave();
+}
+window.cycleMilestone=cycleMilestone;
+
+function setMilestoneField(projId,idx,field,val){
+  const proj=projects.find(p=>p.id==projId);
+  proj.milestones[idx][field]=val;
+  updateOverview(); scheduleSave();
+}
+window.setMilestoneField=setMilestoneField;
+
+function addMilestone(projId){
   const input=document.getElementById(`new-ms-${projId}`);
   const name=input.value.trim();
   if(!name) return;
   const proj=projects.find(p=>p.id==projId);
   proj.milestones.push({name,state:0,startDate:'',endDate:''});
   input.value='';
-  renderProjects(); updateOverview();
+  renderProjects(); updateOverview(); scheduleSave();
 }
+window.addMilestone=addMilestone;
 
-function deleteMilestone(projId,idx) {
+function deleteMilestone(projId,idx){
   const proj=projects.find(p=>p.id==projId);
   proj.milestones.splice(idx,1);
-  renderProjects(); updateOverview();
+  renderProjects(); updateOverview(); scheduleSave();
 }
+window.deleteMilestone=deleteMilestone;
 
-function toggleLog(projId) {
-  logOpen[projId]=!logOpen[projId];
-  renderProjects();
+// ── Project actions ──
+function updateProject(id,field,val){
+  const proj=projects.find(p=>p.id==id);
+  if(proj){ proj[field]=val; scheduleSave(); }
 }
+window.updateProject=updateProject;
 
-function addLogEntry(projId) {
+function archiveProject(id){
+  const proj=projects.find(p=>p.id==id);
+  if(proj){ proj.archived=true; renderProjects(); updateOverview(); scheduleSave(); }
+}
+window.archiveProject=archiveProject;
+
+function unarchiveProject(id){
+  const proj=projects.find(p=>p.id==id);
+  if(proj){ proj.archived=false; renderProjects(); updateOverview(); scheduleSave(); }
+}
+window.unarchiveProject=unarchiveProject;
+
+function deleteProject(id){
+  if(!confirm('Permanently delete this project?')) return;
+  projects=projects.filter(p=>p.id!=id);
+  festivals.forEach(f=>{ if(String(f.projectId)===String(id)) f.projectId=''; });
+  renderProjects(); renderFestivals(); updateOverview(); scheduleSave();
+}
+window.deleteProject=deleteProject;
+
+function addProject(){
+  const col=COLORS[projects.filter(p=>!p.archived).length%COLORS.length];
+  projects.push({id:nextProjId++,title:'New project',type:'Feature film',color:col,milestones:MILESTONES.map(m=>({name:m,state:0,startDate:'',endDate:''})),pageLog:[],notes:'',archived:false});
+  renderProjects(); updateOverview(); showTab('projects'); scheduleSave();
+}
+window.addProject=addProject;
+
+function toggleArchiveView(){
+  archiveVisible=!archiveVisible;
+  document.getElementById('archive-container').style.display=archiveVisible?'':'none';
+  document.getElementById('archive-chevron').style.transform=archiveVisible?'rotate(180deg)':'';
+  document.getElementById('archive-toggle-label').textContent=archiveVisible?'Hide archived projects':'Show archived projects';
+}
+window.toggleArchiveView=toggleArchiveView;
+
+function toggleLog(projId){ logOpen[projId]=!logOpen[projId]; renderProjects(); }
+window.toggleLog=toggleLog;
+
+function toggleFests(projId){ festOpen[projId]=!festOpen[projId]; renderProjects(); }
+window.toggleFests=toggleFests;
+
+// ── Page log ──
+function addLogEntry(projId){
   const goalEl=document.getElementById(`log-goal-${projId}`);
   const actualEl=document.getElementById(`log-actual-${projId}`);
   const goal=parseInt(goalEl.value);
-  if(!goal||goal<=0){goalEl.focus();return;}
+  if(!goal||goal<=0){ goalEl.focus(); return; }
   const actualVal=actualEl.value.trim();
   const actual=actualVal!==''?parseInt(actualVal):null;
   const proj=projects.find(p=>p.id==projId);
   proj.pageLog.push({goal,actual});
   goalEl.value=''; actualEl.value='';
   logOpen[projId]=true;
-  renderProjects();
+  renderProjects(); scheduleSave();
 }
+window.addLogEntry=addLogEntry;
 
-function updateLogActual(projId,idx,val) {
+function updateLogActual(projId,idx,val){
   const proj=projects.find(p=>p.id==projId);
   proj.pageLog[idx].actual=val.trim()!==''?parseInt(val):null;
   logOpen[projId]=true;
-  renderProjects();
+  renderProjects(); scheduleSave();
 }
+window.updateLogActual=updateLogActual;
 
-function deleteLogEntry(projId,idx) {
+function deleteLogEntry(projId,idx){
   const proj=projects.find(p=>p.id==projId);
   proj.pageLog.splice(idx,1);
   logOpen[projId]=true;
-  renderProjects();
+  renderProjects(); scheduleSave();
 }
+window.deleteLogEntry=deleteLogEntry;
 
-function updateProject(id,field,val) {
-  const proj=projects.find(p=>p.id==id);
-  if(proj) proj[field]=val;
-}
-
-function archiveProject(id) {
-  const proj=projects.find(p=>p.id==id);
-  if(proj){proj.archived=true;}
-  renderProjects(); updateOverview();
-}
-
-function unarchiveProject(id) {
-  const proj=projects.find(p=>p.id==id);
-  if(proj){proj.archived=false;}
-  renderProjects(); updateOverview();
-}
-
-function deleteProject(id) {
-  if(!confirm('Permanently delete this project?')) return;
-  projects=projects.filter(p=>p.id!=id);
-  festivals.forEach(f=>{if(String(f.projectId)===String(id))f.projectId='';});
-  renderProjects(); renderFestivals(); updateOverview();
-}
-
-function addProject() {
-  const col=COLORS[projects.filter(p=>!p.archived).length%COLORS.length];
-  projects.push({id:nextProjId++,title:'New project',type:'Feature film',color:col,milestones:MILESTONES.map(m=>({name:m,state:0,startDate:'',endDate:''})),pageLog:[],notes:'',archived:false});
-  renderProjects(); updateOverview(); showTab('projects');
-}
-
-function renderFestivals() {
-  const tbody=document.getElementById('festival-body');
-  const empty=document.getElementById('festival-empty');
-  tbody.innerHTML='';
-  if(!festivals.length){empty.style.display='';return;}
-  empty.style.display='none';
-  festivals.forEach(f=>{
-    const projOpts=projects.map(p=>`<option value="${p.id}" ${String(f.projectId)===String(p.id)?'selected':''}>${esc(p.title)}</option>`).join('');
-    const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td><input class="fest-name-input" value="${esc(f.name)}" placeholder="Festival name" onchange="updateFestival(${f.id},'name',this.value)" /></td>
-      <td><input type="date" class="fest-cell-input" value="${f.deadline}" onchange="updateFestival(${f.id},'deadline',this.value)" /></td>
-      <td><input class="fest-cell-input" value="${esc(f.cost)}" placeholder="$0" onchange="updateFestival(${f.id},'cost',this.value)" /></td>
-      <td><select class="project-link-select" onchange="updateFestival(${f.id},'projectId',this.value)"><option value="">— none —</option>${projOpts}</select></td>
-      <td><input class="fest-cell-input" value="${esc(f.requirements)}" placeholder="e.g. 15 min max" onchange="updateFestival(${f.id},'requirements',this.value)" /></td>
-      <td class="submitted-toggle"><div class="toggle-track ${f.submitted?'on':''}" onclick="toggleSubmitted(${f.id})" title="${f.submitted?'Mark as not submitted':'Mark as submitted'}"><div class="toggle-thumb"></div></div></td>
-      <td><button class="icon-btn" onclick="deleteFestival(${f.id})" title="Remove"><i class="ti ti-x" style="font-size:13px"></i></button></td>
-    `;
-    tbody.appendChild(tr);
-  });
-  updateOverview();
-}
-
-function updateFestival(id,field,val) {
+// ── Festival actions ──
+function updateFestival(id,field,val){
   const f=festivals.find(x=>x.id==id);
-  if(f){f[field]=val;renderFestivals();renderProjects();}
+  if(f){ f[field]=val; renderFestivals(); renderProjects(); scheduleSave(); }
 }
+window.updateFestival=updateFestival;
 
-function toggleSubmitted(id) {
+function toggleSubmitted(id){
   const f=festivals.find(x=>x.id==id);
-  if(f){f.submitted=!f.submitted;renderFestivals();updateOverview();}
+  if(f){ f.submitted=!f.submitted; renderFestivals(); updateOverview(); scheduleSave(); }
 }
+window.toggleSubmitted=toggleSubmitted;
 
-function deleteFestival(id) {
+function deleteFestival(id){
   festivals=festivals.filter(x=>x.id!=id);
-  renderFestivals(); renderProjects(); updateOverview();
+  renderFestivals(); renderProjects(); updateOverview(); scheduleSave();
 }
+window.deleteFestival=deleteFestival;
 
-function addFestival() {
+function addFestival(){
   festivals.push({id:nextFestId++,name:'',deadline:'',cost:'',projectId:'',requirements:'',submitted:false});
-  renderFestivals(); showTab('festivals');
+  renderFestivals(); showTab('festivals'); scheduleSave();
 }
+window.addFestival=addFestival;
 
-function deadlineUrgency(dateStr) {
-  if(!dateStr) return null;
-  const diff=(new Date(dateStr)-new Date())/(1000*60*60*24);
-  if(diff<14) return 'urgent';
-  if(diff<45) return 'soon';
-  return 'ok';
+// ── Overview ──
+function deadlineUrgency(d){
+  if(!d) return null;
+  const diff=(new Date(d)-new Date())/(1000*60*60*24);
+  return diff<14?'urgent':diff<45?'soon':'ok';
 }
-
-function deadlineDaysLabel(dateStr) {
-  if(!dateStr) return '';
-  const diff=Math.ceil((new Date(dateStr)-new Date())/(1000*60*60*24));
+function deadlineDaysLabel(d){
+  if(!d) return '';
+  const diff=Math.ceil((new Date(d)-new Date())/(1000*60*60*24));
   if(diff<0) return 'Past due';
   if(diff===0) return 'Today';
   if(diff===1) return 'Tomorrow';
   return `${diff}d away`;
 }
 
-function updateOverview() {
-  const activeProjects=projects.filter(p=>!p.archived);
-  const done=activeProjects.reduce((a,p)=>a+p.milestones.filter(m=>m.state===2).length,0);
+function updateOverview(){
+  const active=projects.filter(p=>!p.archived);
+  const done=active.reduce((a,p)=>a+p.milestones.filter(m=>m.state===2).length,0);
   const submitted=festivals.filter(f=>f.submitted).length;
-  const total=festivals.length;
-  document.getElementById('stat-projects').textContent=activeProjects.length;
+  document.getElementById('stat-projects').textContent=active.length;
   document.getElementById('stat-milestones').textContent=done;
-  document.getElementById('stat-festivals').textContent=`${submitted} out of ${total}`;
+  document.getElementById('stat-festivals').textContent=`${submitted} of ${festivals.length}`;
   const list=document.getElementById('due-soon-list');
   const items=[];
-  // Festival deadlines — exclude submitted
   [...festivals].filter(f=>f.deadline&&!f.submitted).sort((a,b)=>new Date(a.deadline)-new Date(b.deadline)).slice(0,6).forEach(f=>{
     const proj=projects.find(p=>String(p.id)===String(f.projectId));
     const urg=deadlineUrgency(f.deadline);
     const badge=urg?`<span class="deadline-badge deadline-${urg}">${deadlineDaysLabel(f.deadline)}</span>`:'';
-    items.push(`<div class="due-soon-item"><div><div class="due-item-name">${esc(f.name)||'Unnamed festival'}</div><div class="due-item-project">${proj?esc(proj.title):'No project linked'} · ${f.deadline}</div></div>${badge}</div>`);
+    items.push(`<div class="due-soon-item"><div><div class="due-item-name">${esc(f.name||'Unnamed festival')}</div><div class="due-item-project">${proj?esc(proj.title):'No project linked'} · ${f.deadline}</div></div>${badge}</div>`);
   });
-  // Milestone end dates — exclude completed (state===2) and archived projects
-  activeProjects.forEach(p=>{
-    p.milestones.filter(m=>m.endDate&&m.state!==2).sort((a,b)=>new Date(a.endDate)-new Date(b.endDate)).slice(0,3).forEach(m=>{
+  active.forEach(p=>{
+    (p.milestones||[]).filter(m=>m.endDate&&m.state!==2).sort((a,b)=>new Date(a.endDate)-new Date(b.endDate)).slice(0,3).forEach(m=>{
       const urg=deadlineUrgency(m.endDate);
       const badge=urg?`<span class="deadline-badge deadline-${urg}">${deadlineDaysLabel(m.endDate)}</span>`:'';
       items.push(`<div class="due-soon-item"><div><div class="due-item-name">${esc(m.name)}</div><div class="due-item-project">${esc(p.title)} · ${m.endDate}</div></div>${badge}</div>`);
@@ -717,10 +818,8 @@ function updateOverview() {
   });
   list.innerHTML=items.length?items.join(''):'<div class="empty-hint">Add milestone end dates or festival deadlines to see them here</div>';
 }
+window.updateOverview=updateOverview;
 
-renderProjects();
-renderFestivals();
-updateOverview();
 </script>
 </div><!-- .app -->
 </div><!-- .page-body -->
