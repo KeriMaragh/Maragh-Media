@@ -329,6 +329,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAdFuTbDP6ucy7glB36AJXcT4p4Q6wR0Dg",
@@ -342,6 +343,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
 const DATA_REF = ref(db, 'trackerData');
 
 const MILESTONES = ['Logline','Synopsis','Outline','First draft','Revisions','Final draft','Submission'];
@@ -397,6 +399,14 @@ window.addEventListener('beforeunload', (e) => {
   if (isDirty) { e.preventDefault(); e.returnValue = ''; return ''; }
 });
 
+signInAnonymously(auth).then(() => {
+  startDataSync();
+}).catch((error) => {
+  console.error("Sign-in failed:", error.code, error.message);
+  setSaveState('error', 'Sign-in failed — try refreshing');
+});
+
+function startDataSync() {
 onValue(DATA_REF, (snapshot) => {
   const data = snapshot.val();
   if (data) {
@@ -430,6 +440,7 @@ onValue(DATA_REF, (snapshot) => {
   renderFestivals();
   updateOverview();
 }, { onlyOnce: true });
+}
 
 function showTab(tab) {
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('visible'));
